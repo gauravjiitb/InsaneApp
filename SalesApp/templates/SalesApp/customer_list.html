@@ -1,0 +1,46 @@
+{% extends 'base_staff.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load bootstrap_pagination %}
+{% load my_extras %}
+
+{% block content %}
+<div class="container">
+  <br>
+
+  <form class="form-group" method="get">
+      {{filter.form.as_p}}
+      <input class="btn btn-primary" type="submit" value='Search' />
+  </form>
+
+  <table class="table table-bordered table-hover table-secondary">
+  <thead>
+    <tr>
+      <th scope="col">Customer ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email Address</th>
+      <th scope="col">Phone Number</th>
+      {%if user|has_group:'Sales' or user.is_superuser%}<th scope="col">Actions</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for customer in filter.qs %}
+      <tr>
+        <th scope="row">{{ customer.id }}</th>
+        <td><a href="{% url 'SalesApp:customer_detail' pk=customer.pk %}">{{ customer.name }}</a></td>
+        <td>{{ customer.email }}</td>
+        <td>{{ customer.phone }}</td>
+        {%if user|has_group:'Sales' or user.is_superuser%}
+        <td><a href="{% url 'SalesApp:customer_update' pk=customer.pk %}">
+          <button type="button" class="btn btn-primary btn-sm">Edit</button></a></td>
+        {% endif %}
+
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% bootstrap_paginate page_obj %}
+</div>
+
+{% endblock %}

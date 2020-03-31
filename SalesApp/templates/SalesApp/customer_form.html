@@ -1,0 +1,20 @@
+{% extends "base_staff.html" %}
+
+{% block content %}
+
+<div class="container">
+  <br>
+  <div class="jumbotron">
+    <h2 align='center'>Please fill the Customer details below.</h2>
+    <br>
+    <form align='center' method="POST" class="post-form">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button class="btn btn-primary btn-lg" type="submit" class="save btn btn-default">Save</button>
+    </form>
+  </div>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base_staff.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron" align='center'>
+      <h1>Dashboard</h1>
+
+      <table class="table">
+        <thead class="table-primary">
+          <tr>
+            <th scope="col">SalesApp</th>
+            <th class="table-primary"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="{% url 'SalesApp:customer_list' %}">Customers</a></td>
+            <td class="float-right"> <a href="{% url 'SalesApp:customer_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
+          </tr>
+          <tr>
+            <td><a href="{% url 'SalesApp:lead_list' %}">Leads</a></td>
+            <td class="float-right"> <a href="{% url 'SalesApp:lead_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <br>
+      <table class="table">
+        <thead class="table-primary">
+          <tr>
+            <th scope="col">OperationsApp</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="{% url 'OperationsApp:booking_list' %}">Bookings</a></td>
+            <td class="float-right"> <a href="{% url 'OperationsApp:booking_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <table class="table">
+        <thead class="table-primary">
+          <tr>
+            <th scope="col">AccountsApp</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Invoices</td>
+            <td align='right'> <button class='btn btn-outline-success' type="submit" name="button">Add New</button> </td>
+          </tr>
+          <tr>
+            <td>Payments</td>
+            <td align='right'> <button class='btn btn-outline-success' type="submit" name="button">Add New</button> </td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+</div>
+
+{% endblock %}

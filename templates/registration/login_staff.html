@@ -1,0 +1,30 @@
+
+{# BOOTSTRAP #}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+{% load static %}
+{% load bootstrap4 %}
+
+{% block content %}
+  <br><br><br>
+  <div class="jumbotron" align='center'>
+    <img src="{% static "images/logo_xs.png" %}" alt="Insane Travelers">
+    <br><br><br><br>
+
+    <div>
+      {% if form.errors %}
+        <p>Your username and password didn't match.Please try again!</p>
+      {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          {{form.as_p}}
+          <input type="submit" class='btn btn-primary btn-lg' value="Login" />
+          <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+    </div>
+
+  </div>
+
+{% endblock %}

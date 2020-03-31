@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap4 %}
+{% load my_extras %}
+
+<html lang="en" dir="ltr">
+  <head>
+    <!-- Required meta tags for bootstrap -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    <title></title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/master.css' %}">
+
+  </head>
+  <body>
+
+    {% if user.is_authenticated and user.is_staff %}
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">
+          <img src="{% static "images/logo_xs.png" %}" alt="Insane Travelers">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'dashboard' %}">Home</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sales
+                </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="{% url 'SalesApp:customer_list' %}">Customers</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'SalesApp:lead_list' %}">Leads</a>
+                    </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Operations
+                </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="{% url 'OperationsApp:booking_list' %}">Bookings</a>
+                    </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Accounts
+                </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="#">Invoices</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Payments</a>
+                    </div>
+            </li>
+
+          </ul>
+          <a class="nav-link" href="{% url 'logout' %}" tabindex="-1" aria-disabled="true">
+            <button class="btn btn-danger my-2 my-sm-0" type="submit">Logout</button></a>
+
+        </div>
+      </nav>
+    </div>
+
+    {% block content %}
+
+    {% endblock %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    {% else %}
+    <div class="container">
+      <div class="jumbotron">
+        <h2>You need to be logged in as staff to view this page.</h2>
+        <br>
+        <h2>Please <a href="{% url 'login' %}">CLICK HERE</a> to login.</h2>
+      </div>
+    </div>
+    {% endif %}
+
+  </body>
+</html>

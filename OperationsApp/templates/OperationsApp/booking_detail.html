@@ -1,0 +1,75 @@
+{% extends "base_staff.html" %}
+{% block content %}
+
+<div class="container w-50 p-3">
+  <br>
+  <div class="jumbotron">
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Booking Date</th>
+        <td>{{ booking.booking_date }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Trip ID</th>
+        <td>{{ booking.trip_id }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Name</th>
+        <td>{{ booking.lead.customer.name }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Email Address</th>
+        <td>{{ booking.lead.customer.email }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Phone Number</th>
+        <td>{{ booking.lead.customer.phone }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Status</th>
+        <td>{{ booking.get_status_display }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Destinations</th>
+        <td>{{ booking.booked_destinations }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Lead Source</th>
+        <td>{{ booking.lead.get_lead_source_display }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Lead Source ID</th>
+        <td>{{ booking.lead.lead_source_id }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Projected Revenue</th>
+        <td>{{ booking.projected_revenue }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Sale Amount</th>
+        <td>{{ booking.sale_amount }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">TCS</th>
+        <td>{{ booking.tcs_amount }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">GST</th>
+        <td>{{ booking.gst_amount }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Commission Paid</th>
+        <td>{{ booking.commission_paid }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Actual Revenue</th>
+        <td>{{ booking.actual_revenue }}</td>
+      </tr>
+    </table>
+    <a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}"> <button class="btn btn-warning btn-lg float-right" type="submit">Edit </button> </a>
+    <br>
+  </div>
+
+</div>
+
+{% endblock %}

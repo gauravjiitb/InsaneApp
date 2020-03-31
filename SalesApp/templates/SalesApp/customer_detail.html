@@ -1,0 +1,29 @@
+{% extends "base_staff.html" %}
+
+{% block content %}
+
+<div class="container w-50 p-3">
+  <br>
+  <div class="jumbotron">
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail">Name</th>
+        <td>{{ customer.name }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Email Address</th>
+        <td>{{ customer.email }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Phone Number</th>
+        <td>{{ customer.phone }}</td>
+      </tr>
+    </table>
+    <a href="{% url 'SalesApp:customer_update' pk=customer.pk %}"> <button class="btn btn-warning btn-lg float-right" type="submit">Edit</button> </a>
+    <a href="{% url 'SalesApp:lead_create_from_customer' pk=customer.pk %}"> <button class="btn btn-warning btn-lg float-right" type="submit">Create Lead</button> </a>
+    <br>
+  </div>
+
+</div>
+
+{% endblock %}
