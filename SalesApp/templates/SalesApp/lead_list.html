@@ -27,7 +27,7 @@
   </thead>
   <tbody>
 
-    {% for lead in filter.qs %}
+    {% for lead in object_list %}
       <tr>
         <th scope="row">{{ lead.trip_id }}</th>
         <td><a href="{% url 'SalesApp:lead_detail' pk=lead.pk %}">{{ lead.customer.name }}</a></td>
@@ -36,15 +36,20 @@
         <td>{{ lead.get_lead_status_display }}</td>
         <td>{{ lead.destinations }}</td>
         {%if user|has_group:'Sales' %}
-        <td><a href="{% url 'SalesApp:lead_update' pk=lead.pk %}">
-          <button type="button" class="btn btn-primary btn-sm">Edit</button></a></td>
+        <td class="w-25 p-3">
+          <a href="{% url 'SalesApp:lead_update' pk=lead.pk %}"><button type="button" class="btn btn-primary float-left btn-sm px-3 mx-3">Edit</button></a>
+          <form method="GET" action="{% url 'OperationsApp:booking_create' %}">
+            <input type="hidden" name="lead_id" value="{{lead.id}}">
+              <button class="btn btn-primary btn-sm float-right" type="submit">Create Booking</button>
+          </form>
+        </td>
         {% endif %}
 
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  {% bootstrap_paginate page_obj %}
+  {% bootstrap_paginate page_obj range=5 %}
 </div>
 
 {% endblock %}

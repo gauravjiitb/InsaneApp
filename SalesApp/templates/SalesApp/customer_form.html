@@ -1,4 +1,7 @@
 {% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
@@ -9,12 +12,10 @@
     <br>
     <form align='center' method="POST" class="post-form">
     {% csrf_token %}
-    {{form.as_p}}
+    {{ form.as_p }}
     <button class="btn btn-primary btn-lg" type="submit" class="save btn btn-default">Save</button>
     </form>
   </div>
-
 </div>
-
 
 {% endblock %}

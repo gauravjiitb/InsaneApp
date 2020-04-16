@@ -1,0 +1,91 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load my_extras %}
+{% block content %}
+
+<div class="container w-50 p-3">
+  <br>
+  <div class="jumbotron">
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Account</th>
+        <td>{{ transaction.account }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Transaction Date</th>
+        <td>{{ transaction.date }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Description</th>
+        <td>{{ transaction.description }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Amount</th>
+        <td>{{ transaction.amount }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Transaction Type</th>
+        <td>{{ transaction.get_inout_type_display }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Balance</th>
+        <td>{{ transaction.balance }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Transaction Reference Number</th>
+        <td>{{ transaction.transaction_ref }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Accounting Head</th>
+        <td>{{ transaction.transaction_head }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Remarks</th>
+        <td>{{ transaction.remarks }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Reconciliation Status</th>
+        <td>{{ transaction.reconcile_status_bool }}</td>
+      </tr>
+    </table>
+    {% if user|has_group:'Accounts' %}
+      <a href="{% url 'AccountsApp:transaction_update' pk=transaction.pk %}"> <button class="btn btn-warning btn-lg float-right mx-3 px-5" type="submit">Edit </button> </a>
+      {% if transaction.transaction_head.trip_bool and not transaction.reconcile_status_bool %}
+      <a href="{% url 'AccountsApp:transaction_reconcile' pk=transaction.pk %}"><button type="button" class="btn btn-primary btn-lg float-right">Reconcile</button></a>
+      {% elif transaction.transaction_head.trip_bool  and transaction.reconcile_status_bool %}
+      <a href="{% url 'AccountsApp:transaction_reconcile_cancel' pk=transaction.pk %}"><button type="button" class="btn btn-primary btn-lg float-right">Cancel Reconciliation</button></a>
+      {% endif %}
+    {% endif %}
+    <br>
+  </div>
+</div>
+
+
+<div class="container w-75 p-3">
+  <div class="jumbotron">
+    <h3 align="center">Reconciliation Details</h3>
+    <br>
+    <table class="table table-bordered table-hover table-secondary">
+
+      <thead>
+        <th class="bg-secondary th-customer-detail">Date</th>
+        <th class="bg-secondary th-customer-detail">Amount</th>
+        <th class="bg-secondary th-customer-detail">Cr / Dr</th>
+        <th class="bg-secondary th-customer-detail">Description</th>
+        <th class="bg-secondary th-customer-detail">Booking</th>
+      </thead>
+      {% for payment in trip_payments %}
+      <tr>
+        <td>{{ payment.date }}</td>
+        <td>{{ payment.amount }}</td>
+        <td>{{ payment.get_inout_type_display }}</td>
+        <td>{{ payment.description }}</td>
+        <td> <a href="{% url 'OperationsApp:booking_detail' pk=payment.booking.pk %}">{{ payment.booking }}</a> </td>
+      </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+</div>
+
+{% endblock %}

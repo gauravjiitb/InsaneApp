@@ -18,6 +18,5 @@ urlpatterns = [
     path('lead/<int:pk>/',views.LeadDetailView.as_view(),name='lead_detail'),
     path('lead/create/',views.LeadCreateView.as_view(),name='lead_create'),
     path('lead/<int:pk>/update',views.LeadUpdateView.as_view(),name='lead_update'),
-    path('lead/create/customer/<int:pk>/',views.LeadCreateFromCustomerView.as_view(),name='lead_create_from_customer'),
-    # path('lead/<int:pk>/delete',views.LeadDeleteView.as_view(),name='lead_delete'),
+    # path('lead/create/customer/',views.LeadCreateFromCustomerView.as_view(),name='lead_create_from_customer'),
 ]

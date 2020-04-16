@@ -1,0 +1,29 @@
+{% extends "base_staff.html" %}
+
+{% block content %}
+<div class="container">
+  <br>
+  <div class="jumbotron">
+    <h2 align='center'>Please fill the details below.</h2>
+    <br>
+    <form align='center' method="POST" class="post-form">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button class="btn btn-primary btn-lg" type="submit" class="save btn btn-default">Save</button>
+    </form>
+  </div>
+</div>
+
+{% if update %}
+<script>
+  $('#id_date').prop('readonly', true);
+  $('#id_account').attr("style", "pointer-events: none;").attr('tabindex', -1);
+  $('#id_transaction_ref').prop('readonly', true);
+  $('#id_amount').prop('readonly', true);
+  $('#id_inout_type').attr("style", "pointer-events: none;").attr('tabindex', -1);
+  $('#id_balance').prop('readonly', true);
+  $('#id_reference_number').prop('readonly', true);
+</script>
+{% endif %}
+
+{% endblock %}

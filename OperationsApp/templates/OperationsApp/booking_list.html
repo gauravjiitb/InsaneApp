@@ -1,6 +1,7 @@
 {% extends 'base_staff.html' %}
 {% load static %}
 {% load bootstrap4 %}
+{% load bootstrap_pagination %}
 {% load my_extras %}
 
 {% block content %}
@@ -29,7 +30,7 @@
   </thead>
   <tbody>
 
-    {% for booking in filter.qs %}
+    {% for booking in object_list %}
       <tr>
         <th scope="row">{{ booking.booking_date }}</th>
         <td><a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">{{ booking.trip_id }}</a></td>
@@ -42,13 +43,12 @@
         <td>{{ booking.projected_revenue }}</td>
         <td>{{ booking.sale_amount }}</td>
         {%if user|has_group:'Operations' %}
-        <td><a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}">
-          <button type="button" class="btn btn-primary btn-sm">Edit</button></a></td>
+        <td><a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}"><button type="button" class="btn btn-primary btn-sm">Edit</button></a></td>
         {% endif %}
 
       </tr>
     {% endfor %}
     </tbody>
   </table>
-
+  {% bootstrap_paginate page_obj range=5 %}
 {% endblock %}

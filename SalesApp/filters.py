@@ -11,7 +11,7 @@ class CustomerFilter(django_filters.FilterSet):
 
 
 class LeadFilter(django_filters.FilterSet):
-    customer = django_filters.ModelChoiceFilter(queryset=Customer.objects.all())
+    customer = django_filters.ModelChoiceFilter(queryset=Customer.objects.all().order_by('name'))
     lead_status = django_filters.ChoiceFilter(choices=Lead.lead_status_choices)
     class Meta:
         model = Lead

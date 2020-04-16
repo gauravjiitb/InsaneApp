@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     'bootstrap_pagination',
     'widget_tweaks',
     'import_export',
+    'phonenumber_field',
+    'crispy_forms',
     'SalesApp',
     'OperationsApp',
-    'AccountsApp'
+    'AccountsApp',
+    'ContentApp'
 ]
 
 MIDDLEWARE = [

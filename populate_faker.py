@@ -11,7 +11,7 @@ from faker import Faker
 
 fakegen = Faker()
 
-def populate(N=20):
+def populate_faker(N=20):
 
     for entry in range(N):
         fake_name = fakegen.name()

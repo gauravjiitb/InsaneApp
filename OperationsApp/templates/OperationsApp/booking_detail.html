@@ -2,8 +2,9 @@
 {% block content %}
 
 <div class="container w-50 p-3">
-  <br>
   <div class="jumbotron">
+    <h3 align="center">Booking Overview</h3>
+    <br>
     <table class="table table-bordered table-hover table-secondary">
       <tr>
         <th class="bg-secondary th-customer-detail w-25 p-3">Booking Date</th>
@@ -66,10 +67,38 @@
         <td>{{ booking.actual_revenue }}</td>
       </tr>
     </table>
-    <a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}"> <button class="btn btn-warning btn-lg float-right" type="submit">Edit </button> </a>
+    <a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}"><button class="btn btn-warning btn-lg float-right mx-3 px-5" type="submit">Edit </button></a>
+  </div>
+</div>
+
+<div class="container w-75 p-3">
+  <div class="jumbotron">
+    <h3 align="center">Payment Details</h3>
+    <br>
+    <table class="table table-bordered table-hover table-secondary">
+
+      <thead>
+        <th class="bg-secondary th-customer-detail">Date</th>
+        <th class="bg-secondary th-customer-detail">Amount</th>
+        <th class="bg-secondary th-customer-detail">Cr / Dr</th>
+        <th class="bg-secondary th-customer-detail">Description</th>
+        <th class="bg-secondary th-customer-detail">Transaction Details</th>
+      </thead>
+      {% for payment in payments %}
+      <tr>
+        <td>{{ payment.date }}</td>
+        <td>{{ payment.amount }}</td>
+        <td>{{ payment.get_inout_type_display }}</td>
+        <td>{{ payment.description }}</td>
+        <td class="w-50 p-3"> {% if payment.transaction %} <a href="{% url 'AccountsApp:transaction_detail' pk=payment.transaction.pk %}">{{ payment.transaction.transaction_ref }}</a> {% else %} Pending {% endif %} </td>
+      </tr>
+      {% endfor %}
+
+    </table>
+    <a href="{% url 'AccountsApp:proforma_invoice_create_update' pk=booking.pk %}"><button class="btn btn-warning btn-lg float-right" type="submit">Create / Edit Proforma Invoice</button></a>
     <br>
   </div>
-
 </div>
+
 
 {% endblock %}

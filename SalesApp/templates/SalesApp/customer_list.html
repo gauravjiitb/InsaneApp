@@ -8,7 +8,8 @@
 <div class="container">
   <br>
 
-  <form class="form-group" method="get">
+  <form class="form-group form-inline" method="get">
+      {% csrf_token %}
       {{filter.form.as_p}}
       <input class="btn btn-primary" type="submit" value='Search' />
   </form>
@@ -25,22 +26,27 @@
   </thead>
   <tbody>
 
-    {% for customer in filter.qs %}
+    {% for customer in object_list %}
       <tr>
         <th scope="row">{{ customer.id }}</th>
         <td><a href="{% url 'SalesApp:customer_detail' pk=customer.pk %}">{{ customer.name }}</a></td>
         <td>{{ customer.email }}</td>
         <td>{{ customer.phone }}</td>
         {%if user|has_group:'Sales' or user.is_superuser%}
-        <td><a href="{% url 'SalesApp:customer_update' pk=customer.pk %}">
-          <button type="button" class="btn btn-primary btn-sm">Edit</button></a></td>
+        <td class="w-25 p-3">
+          <a href="{% url 'SalesApp:customer_update' pk=customer.pk %}"><button type="button" class="btn btn-primary btn-sm float-left px-3 mx-3">Edit</button></a>
+          <form method="GET" action="{% url 'SalesApp:lead_create' %}">
+            <input type="hidden" name="customer_id" value="{{customer.id}}">
+              <button class="btn btn-primary btn-sm float-right" type="submit">Create Lead</button>
+          </form>
+        </td>
         {% endif %}
 
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  {% bootstrap_paginate page_obj %}
+  {% bootstrap_paginate page_obj range=5 %}
 </div>
 
 {% endblock %}

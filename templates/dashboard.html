@@ -17,10 +17,12 @@
         <tbody>
           <tr>
             <td><a href="{% url 'SalesApp:customer_list' %}">Customers</a></td>
+            <td class="float-right"> <a href="{% url 'SalesApp:customer_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
             <td class="float-right"> <a href="{% url 'SalesApp:customer_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
           <tr>
             <td><a href="{% url 'SalesApp:lead_list' %}">Leads</a></td>
+            <td class="float-right"> <a href="{% url 'SalesApp:lead_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
             <td class="float-right"> <a href="{% url 'SalesApp:lead_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
 
@@ -37,6 +39,7 @@
         <tbody>
           <tr>
             <td><a href="{% url 'OperationsApp:booking_list' %}">Bookings</a></td>
+            <td class="float-right"> <a href="{% url 'OperationsApp:booking_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
             <td class="float-right"> <a href="{% url 'OperationsApp:booking_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
         </tbody>
@@ -51,12 +54,14 @@
         </thead>
         <tbody>
           <tr>
-            <td>Invoices</td>
-            <td align='right'> <button class='btn btn-outline-success' type="submit" name="button">Add New</button> </td>
+            <td><a href="{% url 'AccountsApp:trippayment_list' %}">Trip Payments</a></td>
+            <td class="float-right"> <a href="{% url 'AccountsApp:trippayment_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
           </tr>
           <tr>
-            <td>Payments</td>
-            <td align='right'> <button class='btn btn-outline-success' type="submit" name="button">Add New</button> </td>
+            <td><a href="{% url 'AccountsApp:transaction_list' %}">Transactions</a></td>
+            <td class="float-right"> <a href="{% url 'AccountsApp:transaction_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
+            <td class="float-right"> <a href="{% url 'AccountsApp:transaction_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
+            <td class="float-right"> <a href="{% url 'AccountsApp:transaction_upload' %}"><button class='btn btn-outline-success' type="submit" name="button">Bulk File Upload</button></a> </td>
           </tr>
         </tbody>
       </table>

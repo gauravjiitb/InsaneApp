@@ -45,8 +45,23 @@
         <th class="bg-secondary th-customer-detail">Lead Source ID</th>
         <td>{{ lead.lead_source_id }}</td>
       </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Booking</th>
+        <td>
+          {% for booking in bookings %}
+          <a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">
+          {{ booking.trip_id }} ({{booking.booked_destinations}})</td></a>
+          {% endfor %}
+      </tr>
     </table>
-    <a href="{% url 'SalesApp:lead_update' pk=lead.pk %}"> <button class="btn btn-warning btn-lg float-right" type="submit">Edit </button> </a>
+
+    <form method="GET" action="{% url 'OperationsApp:booking_create' %}">
+      <input type="hidden" name="lead_id" value="{{lead.id}}">
+        <button class="btn btn-warning btn-lg float-right" type="submit">Create Booking</button>
+    </form>
+
+    <a href="{% url 'SalesApp:lead_update' pk=lead.pk %}"> <button class="btn btn-warning btn-lg float-right px-5 mx-3" type="submit">Edit </button> </a>
+
     <br>
   </div>
 

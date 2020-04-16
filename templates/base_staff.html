@@ -15,6 +15,10 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/master.css' %}">
 
+    <!-- Jquery -->
+    <script src="http://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+
+
   </head>
   <body>
 
@@ -58,9 +62,9 @@
                 Accounts
                 </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="#">Invoices</a>
+                      <a class="dropdown-item" href="{% url 'AccountsApp:trippayment_list' %}">Trip Payments</a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Payments</a>
+                      <a class="dropdown-item" href="{% url 'AccountsApp:transaction_list' %}">Transactions</a>
                     </div>
             </li>
 

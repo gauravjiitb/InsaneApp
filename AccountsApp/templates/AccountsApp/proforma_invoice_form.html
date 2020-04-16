@@ -1,0 +1,31 @@
+{% extends "base_staff.html" %}
+{% load static %}
+
+{% block content %}
+
+<script src="{% static 'AccountsApp/proforma_invoice_form.js' %}" defer></script>
+
+<div class="container">
+  <br>
+  <div class="jumbotron">
+    <h2 align='center'>Please fill the details below.</h2>
+    <br>
+    <form class=" form-group col-md-12" align='center' method="POST">
+      {% csrf_token %}
+      {{ formset.management_form }}
+      {% if form_error %} {{form_error}} {% endif %} <br><br>
+      <div class="entry">
+        {% for form in formset %}
+            <div class="row">
+              <p>Date: {{ form.date }}</p>
+              <p>Amount : {{ form.amount }}</p>
+              <button class="btn btn-success btn-add" type="button">+</button>
+              <br><br>
+            </div>
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary btn-lg" type="submit" class="save btn btn-default">Save</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base_staff.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h5>You are Cancelling Reconciliation for a transaction.
+        This will delete all the payments associated with that transaction. Please confirm if you want to go ahead.
+    </h5>
+    <br><br>
+    <p>You'll still be able to view the reconciliation details on the transaction page.</p>
+    <br><br>
+    <form method="POST">
+      {% csrf_token %}
+      <input class='btn btn-danger btn-lg float-right' type="submit" value="Confirm" />
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

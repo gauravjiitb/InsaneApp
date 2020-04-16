@@ -1,0 +1,56 @@
+{% extends 'base_staff.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load bootstrap_pagination %}
+{% load my_extras %}
+
+{% block content %}
+<div class="container">
+  <br>
+
+  <form class="form-group" method="get">
+      {{filter.form}}
+      <input class="btn btn-primary float-right" type="submit" value='Search' />
+  </form>
+
+  <table class="table table-bordered table-hover table-secondary">
+  <thead>
+    <tr>
+      <th scope="col">Account</th>
+      <th scope="col">Date</th>
+      <th scope="col">Description</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Cr / Dr</th>
+      <th scope="col">Balance</th>
+      <th scope="col">Transaction Head</th>
+      {% if user|has_group:'Accounts' %}<th class="w-25 p-3" scope="col">Actions</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for transaction in object_list %}
+      <tr>
+        <th scope="row">{{ transaction.account }}</th>
+        <td>{{ transaction.date }}</td>
+        <td><a href="{% url 'AccountsApp:transaction_detail' pk=transaction.pk %}">{{ transaction.description }}</a></td>
+        <td>{{ transaction.amount }}</td>
+        <td>{{ transaction.get_inout_type_display }}</td>
+        <td>{{ transaction.balance }}</td>
+        <td>{{ transaction.transaction_head }}</td>
+        {%if user|has_group:'Accounts' %}
+        <td>
+          <a href="{% url 'AccountsApp:transaction_update' pk=transaction.pk %}"><button type="button" class="btn btn-primary btn-sm px-3">Edit</button></a>
+          {% if transaction.transaction_head.trip_bool and not transaction.reconcile_status_bool %}
+          <a href="{% url 'AccountsApp:transaction_reconcile' pk=transaction.pk %}"><button type="button" class="btn btn-primary btn-sm float-right">Reconcile</button></a>
+          {% endif %}
+        </td>
+        {% endif %}
+
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% bootstrap_paginate page_obj range=5 %}
+</div>
+
+{% endblock %}

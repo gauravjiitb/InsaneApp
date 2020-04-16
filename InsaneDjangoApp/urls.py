@@ -18,6 +18,7 @@ from django.urls import path,include
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
+from InsaneDjangoApp import views as main_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('logout/',auth_views.LogoutView.as_view(),name='logout'),
     path('sales/',include('SalesApp.urls',namespace='SalesApp')),
     path('operations/', include('OperationsApp.urls',namespace='OperationsApp')),
-    path('dashboard/',TemplateView.as_view(template_name='dashboard.html'),name='dashboard'),
+    path('accounts/',include('AccountsApp.urls',namespace='AccountsApp')),
+    path('dashboard/',main_views.DashboardView,name='dashboard'),
     path('403/',TemplateView.as_view(template_name='error_page_403.html'),name='error403'),
     ]

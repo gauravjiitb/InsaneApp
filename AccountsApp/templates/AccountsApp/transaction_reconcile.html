@@ -1,0 +1,56 @@
+{% extends "base_staff.html" %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+
+    {% if not error %}
+    {% if formset_error %} <h6>{{ formset_error }}</h6> {% endif %}
+    <form class="" method="POST">
+      {% csrf_token %}
+      {{formset.management_form}}
+      <table class="table table-bordered table-hover table-secondary">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Booking</th>
+            <th scope="col">Description</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Dr / Cr</th>
+            {% if type == 'v' %}<th scope="col">Vendor</th>{% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in formset %}
+            <tr>
+              <th scope="row">{{ form.date }}</th>
+              <td>{{ form.booking }}</td>
+              <td>{{ form.description }}</td>
+              <td>{{ form.amount }}</td>
+              <td>{{ form.inout_type }}</td>
+              {% if type == 'v' %} <td>{{ form.vendor }}</td> {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit" class="btn btn-primary btn-lg float-right">Confirm Reconciliation</button>
+    </form>
+    <script>
+      $("input[name*='date']").prop('readonly', true);
+      $("input[name*='amount']").prop('readonly', true);
+      $("select[name*='booking']").attr("style", "pointer-events: none;").attr('tabindex', -1);
+      $("select[name*='inout_type']").attr("style", "pointer-events: none;").attr('tabindex', -1);
+    </script>
+
+    {% else %}
+    <h6>{{ error }}</h6> <br>
+    {% endif %}
+
+
+  </div>
+</div>
+
+
+
+{% endblock %}
