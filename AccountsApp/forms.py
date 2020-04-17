@@ -7,6 +7,7 @@ from ContentApp.models import Vendor
 
 class TransactionForm(forms.ModelForm):
     date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
+    inout_type = forms.ChoiceField(label="Type",choices=[('DR','Debit'),('CR','Credit')],widget=forms.Select())
     class Meta:
         model = Transaction
         fields = ('date','account','transaction_ref','amount','description','inout_type','balance','transaction_head','remarks','reference_number','reconcile_details')
@@ -24,7 +25,7 @@ class TransactionUploadForm(forms.Form):
     transaction_head = forms.ModelChoiceField(queryset=TransactionHead.objects.all())
     remarks = forms.CharField(max_length=256,required=False)
     reconcile_bool = forms.BooleanField(initial=False,required=False)
-    inout_type = forms.ChoiceField(choices=[('DR','Debit'),('CR','Credit')],widget=forms.Select())
+    inout_type = forms.ChoiceField(label="Type",choices=[('DR','Debit'),('CR','Credit')],widget=forms.Select())
     fields = ('date','amount','reference','debitamount','creditamount','balance','description','reference_num','reconcile_details','transaction_head','remarks','reconcile_bool','inout_type')
     def __init__(self, *args, **kwargs):
         super(TransactionUploadForm, self).__init__(*args, **kwargs)

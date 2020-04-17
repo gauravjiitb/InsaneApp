@@ -2,17 +2,24 @@
 {% load static %}
 {% load bootstrap4 %}
 {% load bootstrap_pagination %}
+{% load crispy_forms_tags %}
 {% load my_extras %}
 
 {% block content %}
+
 <div class="container">
   <br>
 
-  <form class="form-group" method="get">
-      {{filter.form}}
-      <input class="btn btn-primary float-right" type="submit" value='Search' />
-  </form>
+    <form class="form-group" method="GET">
+      <div class="row align-items-center">
+        <div class="col">{{filter.form.transaction_head}}</div>
+        <div class="col">{{filter.form.date_lt}}</div>
+        <div class="col">{{filter.form.date_gt}}</div>
+        <div class="col"><input class="btn btn-primary btn-sm px-5 float-right" type="submit" value='Search' /></div>
+      </div>
+    </form>
 
+  <br>
   <table class="table table-bordered table-hover table-secondary">
   <thead>
     <tr>
@@ -52,5 +59,12 @@
   </table>
   {% bootstrap_paginate page_obj range=5 %}
 </div>
+
+<script>
+  $("input[name*='date']").after("<small id='passwordHelpBlock' class='form-text text-muted'>Date Format should be:  DD/MM/YY</small>");
+  $("#id_date_lt").attr("placeholder","Search by Date less than");
+  $("#id_date_gt").attr("placeholder","Search by Date greater than");
+  $("#id_transaction_head option:first").text("Select Transaction Head");
+</script>
 
 {% endblock %}

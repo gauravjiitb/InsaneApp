@@ -1,6 +1,7 @@
 {% extends "base_staff.html" %}
 {% load static %}
 {% load bootstrap_pagination %}
+{% load crispy_forms_tags %}
 {% load my_extras %}
 
 {% block content %}
@@ -40,5 +41,8 @@
   {% bootstrap_paginate page_obj %}
 </div>
 
+<script>
+  $("input[name*='date']").attr("placeholder","DD/MM/YY");
+</script>
 
 {% endblock %}

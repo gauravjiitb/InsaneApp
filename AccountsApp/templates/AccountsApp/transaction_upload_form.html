@@ -7,8 +7,8 @@
   <div class="container">
     <br>
     <div class="jumbotron">
-        <div class="row">
-          <form class="md-form" align="center" enctype="multipart/form-data" method="POST">
+        <div class="row justify-content-center">
+          <form class=" form-group md-form" align="center" enctype="multipart/form-data" method="POST">
             {% csrf_token %}
             {% if error %} <h6>{{error}}</h6> {% endif %}
             <br><br>
