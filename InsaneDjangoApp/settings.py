@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'bootstrap_pagination',
     'widget_tweaks',
+    'bootstrap_modal_forms',
     'import_export',
     'phonenumber_field',
     'crispy_forms',
@@ -135,7 +136,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static'),]
 
 STATIC_ROOT = os.path.join(BASE_DIR,'static_root')
 
-LOGIN_URL = ''
+LOGIN_URL = 'dashboard'
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'

@@ -1,8 +1,11 @@
 from django import forms
 
+from bootstrap_modal_forms.forms import BSModalForm
+
 from SalesApp.models import Customer,Lead
 
-class CustomerForm(forms.ModelForm):
+
+class CustomerForm(BSModalForm):
     class Meta:
         model = Customer
         fields = ('name','email','phone')

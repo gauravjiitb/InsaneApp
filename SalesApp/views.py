@@ -1,19 +1,23 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import TemplateView,ListView,DetailView,CreateView,UpdateView,DeleteView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 # from django.contrib.auth.decorators import user_passes_test
 from django_filters.views import FilterView
 from django.views.generic.edit import ModelFormMixin
+from bootstrap_modal_forms.generic import BSModalCreateView,BSModalUpdateView
+
+
 
 from SalesApp.models import Customer,Lead
 from OperationsApp.models import Booking
-from SalesApp.forms import CustomerForm,LeadForm,LeadFromCustomerForm
+from SalesApp.forms import CustomerForm,LeadForm
 from SalesApp.filters import CustomerFilter,LeadFilter
 
 ###############################
 #   CUSTOMER VIEWS
 ###############################
+
 
 class CustomerListView(LoginRequiredMixin,FilterView):
     template_name = 'SalesApp/customer_list.html'
@@ -23,7 +27,6 @@ class CustomerListView(LoginRequiredMixin,FilterView):
     ordering = ['id']
     # queryset = Customer.objects.order_by('id')
     # context_object_name = 'customer_list'
-
 
 
 class CustomerDetailView(DetailView):
@@ -39,24 +42,24 @@ class CustomerDetailView(DetailView):
 	# 	if self.request.user.is_authenticated:
 	# 		return Customer.objects.filter(user=self.request.user)
 
-class CustomerCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
-    # redirect_field_name = 'SalesApp/customer_detail.html'
+
+class CustomerCreateView(LoginRequiredMixin,UserPassesTestMixin,BSModalCreateView):
+    template_name = 'SalesApp/customer_form.html'
     form_class = CustomerForm
     model = Customer
+    success_message = 'Customer was created Successfully.'
+    success_url = reverse_lazy('SalesApp:customer_list')
     def test_func(self):
         return self.request.user.groups.filter(name='Sales').exists()
 
-class CustomerUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-    form_class = CustomerForm
+class CustomerUpdateView(LoginRequiredMixin,UserPassesTestMixin,BSModalUpdateView):
     model = Customer
+    template_name = 'SalesApp/customer_form.html'
+    form_class = CustomerForm
+    success_message = 'Customer was updated Successfully.'
+    success_url = reverse_lazy('SalesApp:customer_list')
     def test_func(self):
         return self.request.user.groups.filter(name='Sales').exists()
-
-# class CustomerDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
-#     model = Customer
-#     success_url = reverse_lazy('SalesApp:customer_list')
-#     def test_func(self):
-#         return self.request.user.is_superuser
 
 
 ###############################

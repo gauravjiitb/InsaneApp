@@ -1,5 +1,6 @@
 {% extends "base_staff.html" %}
 {% load static %}
+{% load widget_tweaks %}
 {% load my_extras %}
 
 {% block content %}
@@ -46,11 +47,11 @@
           <tbody>
           {% for form in formset %}
             <tr>
-              <th scope="row">{{ form.date }}</th>
-              <td>{{ form.reference }} </td>
+              <th scope="row">{{ form.date|attr:"readonly:True" }}</th>
+              <td>{{ form.reference|attr:"readonly:True" }} </td>
               <td> {{form.description}}</td>
               <td>{{ form.transaction_head }}</td>
-              <td>{{ form.amount }}</td>
+              <td>{{ form.amount|attr:"readonly:True" }}</td>
               <td>{{ form.inout_type }}</td>
               <td>{{ form.reconcile_details }}</td>
               <td> {{ form.balance }} </td>
@@ -66,9 +67,9 @@
     </div>
 
     <script>
-      $("input[name*='date']").prop('readonly', true);
-      $("input[name*='reference']").prop('readonly', true);
-      $("input[name*='amount']").prop('readonly', true);
+      // $("input[name*='date']").prop('readonly', true); Implemented in-line through widget-tweaks
+      // $("input[name*='reference']").prop('readonly', true);
+      // $("input[name*='amount']").prop('readonly', true);
       $("select[name*='inout_type']").attr("style", "pointer-events: none;").attr('tabindex', -1);
       $("input[name*='balance']").prop('readonly', true);
       $("input[name*='reference_num']").prop('readonly', true);

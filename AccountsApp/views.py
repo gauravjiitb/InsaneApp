@@ -70,7 +70,6 @@ def transaction_upload(request):
     if request.method == 'POST':
         if request.FILES: # FILEPATH PRESENT
                 uploaded_file = request.FILES['document']
-                print('FILEPATH PRESENT')
                 if uploaded_file.size < 104858:
                     transactions,num_transactions,valid,parsing_error = acc_helpers.hdfc_transaction_txtfile_parser(uploaded_file)
                     # HEADER: 0-date 1-reconcile_details 2-reference 4-debitamount 5-creditamount 6-reference_num 7-balance
