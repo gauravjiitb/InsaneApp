@@ -21,7 +21,7 @@ class TransactionFilter(django_filters.FilterSet):
 
 
 class TripPaymentFilter(django_filters.FilterSet):
-    booking = django_filters.ModelChoiceFilter(queryset=Booking.objects.all().order_by('trip_id'))
+    booking = django_filters.ModelChoiceFilter(queryset=Booking.objects.all().order_by('lead'))
     date_lt = django_filters.DateFilter(field_name='date', lookup_expr='lt',widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
     date_gt = django_filters.DateFilter(field_name='date', lookup_expr='gt',widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
     class Meta:

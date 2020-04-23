@@ -1,17 +1,10 @@
 import django_filters
-from SalesApp.models import Customer,Lead
-
-
-class CustomerFilter(django_filters.FilterSet):
-    class Meta:
-        model = Customer
-        fields = {
-            'name':['icontains'],
-        }
+from ProfilesApp.models import Customer
+from SalesApp.models import Lead
 
 
 class LeadFilter(django_filters.FilterSet):
-    customer = django_filters.ModelChoiceFilter(queryset=Customer.objects.all().order_by('name'))
+    customer = django_filters.ModelChoiceFilter(queryset=Customer.objects.all())
     lead_status = django_filters.ChoiceFilter(choices=Lead.lead_status_choices)
     class Meta:
         model = Lead

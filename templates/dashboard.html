@@ -8,25 +8,42 @@
       <table class="table">
         <thead class="table-primary">
           <tr>
+            <th scope="col">MarketingApp</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="{% url 'MarketingApp:inquiry_list' %}">Inquiries</a></td>
+            <td class="float-right"> <a href="{% url 'MarketingApp:inquiry_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
+            <td class="float-right"> <a href="{% url 'MarketingApp:inquiry_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table">
+        <thead class="table-primary">
+          <tr>
             <th scope="col">SalesApp</th>
             <th class="table-primary"></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><a href="{% url 'SalesApp:customer_list' %}">Customers</a></td>
-            <td class="float-right"> <a href="{% url 'SalesApp:customer_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
-            <td class="float-right"> <button class='customer-create btn btn-outline-success' type="submit" name="button">Add New</button></td>
+            <td><a href="{% url 'ProfilesApp:customer_list' %}">Customers</a></td>
+            <td class="float-right"> <a href="{% url 'ProfilesApp:customer_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
+            <td class="float-right"><a href="{% url 'ProfilesApp:customer_create' %}"><button class='customer-create btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
           <tr>
             <td><a href="{% url 'SalesApp:lead_list' %}">Leads</a></td>
             <td class="float-right"> <a href="{% url 'SalesApp:lead_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
             <td class="float-right"> <a href="{% url 'SalesApp:lead_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
-
         </tbody>
       </table>
+
       <br>
+
       <table class="table">
         <thead class="table-primary">
           <tr>
@@ -42,7 +59,9 @@
           </tr>
         </tbody>
       </table>
+
       <br>
+
       <table class="table">
         <thead class="table-primary">
           <tr>
@@ -63,11 +82,12 @@
           </tr>
         </tbody>
       </table>
+
   </div>
 </div>
 
 
-<!-- Modal for Bootstrap-Modal-Forms -->
+<!-- Modal for Bootstrap-Modal-Forms
 <div class="modal fade" tabindex="-1" role="dialog" id="modal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -80,11 +100,11 @@
 $(document).ready(function() {
 
     $(".customer-create").modalForm({
-        formURL: "{% url 'SalesApp:customer_create' %}"
+        formURL: "{% url 'ProfilesApp:customer_create' %}"
     });
 
 });
 </script>
-
+-->
 
 {% endblock %}

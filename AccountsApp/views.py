@@ -13,7 +13,7 @@ from OperationsApp.models import Booking
 from AccountsApp.models import Account,TransactionHead,Transaction,TripPayment,PendingPayment
 from AccountsApp.filters import TransactionFilter,TripPaymentFilter
 from AccountsApp.forms import TransactionForm,PendingPaymentFormSet,TransactionUploadFormSet,TripPaymentFormSet,TripPaymentForm
-from AccountsApp import helper_functions as acc_helpers
+from InsaneDjangoApp import helper_functions as helpers
 
 #######################################################
 # HELPER FUNCTIONS
@@ -71,13 +71,13 @@ def transaction_upload(request):
         if request.FILES: # FILEPATH PRESENT
                 uploaded_file = request.FILES['document']
                 if uploaded_file.size < 104858:
-                    transactions,num_transactions,valid,parsing_error = acc_helpers.hdfc_transaction_txtfile_parser(uploaded_file)
+                    transactions,num_transactions,valid,parsing_error = helpers.hdfc_transaction_txtfile_parser(uploaded_file)
                     # HEADER: 0-date 1-reconcile_details 2-reference 4-debitamount 5-creditamount 6-reference_num 7-balance
                     if valid:
                         file_valid = True
                         # Process the transactions further
                         for transaction in transactions:
-                            type, num_trips,trip_list = acc_helpers.parse_hdfc_reconcile_details(transaction['reconcile_details'])
+                            type, num_trips,trip_list = helpers.parse_hdfc_reconcile_details(transaction['reconcile_details'])
 
                             inout_type = 'CR' if transaction['debitamount'] == 0 else 'DR'
                             amount = transaction['debitamount'] if inout_type == 'DR' else transaction['creditamount']
@@ -139,7 +139,7 @@ def transaction_reconcile(request,pk):
     payments_list = []
 
     transaction = Transaction.objects.get(id=pk)
-    type, num_trips,trip_list = acc_helpers.parse_hdfc_reconcile_details(transaction.reconcile_details)
+    type, num_trips,trip_list = helpers.parse_hdfc_reconcile_details(transaction.reconcile_details)
     date = transaction.date
 
     # CHECKS IF THE TRANSACTION IS CUSTOMER/VENDOR RELATED. (ncnv = Neither Customer Nor Vendor). Also checks if there is any error in the reconciliation data.

@@ -1,16 +1,17 @@
 import django_filters
-from SalesApp.models import Customer,Lead
+
+from ProfilesApp.models import Customer
+from SalesApp.models import Lead
 from OperationsApp.models import Booking
 
 class BookingFilter(django_filters.FilterSet):
-    customer = django_filters.ModelChoiceFilter(queryset=Customer.objects.all().order_by('name'))
+    lead = django_filters.ModelChoiceFilter(queryset=Lead.objects.all())
     status = django_filters.ChoiceFilter(choices=Booking.status_choices)
     class Meta:
         model = Booking
         fields = {
-            'trip_id':['iexact'],
             'booked_destinations':['icontains'],
-            'customer':[],
+            'lead':[],
             'status':[],
         }
     @property

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
 {% load bootstrap4 %}
+{% load bootstrap_pagination %}
+{% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% load my_extras %}
 
@@ -43,32 +45,42 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Marketing
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'MarketingApp:inquiry_list' %}">Inquiries</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Sales
                 </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="{% url 'SalesApp:customer_list' %}">Customers</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="{% url 'SalesApp:lead_list' %}">Leads</a>
-                    </div>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'ProfilesApp:customer_list' %}">Customers</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'SalesApp:lead_list' %}">Leads</a>
+                </div>
             </li>
 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Operations
                 </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="{% url 'OperationsApp:booking_list' %}">Bookings</a>
-                    </div>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'OperationsApp:booking_list' %}">Bookings</a>
+                </div>
             </li>
+
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Accounts
                 </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="{% url 'AccountsApp:trippayment_list' %}">Trip Payments</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="{% url 'AccountsApp:transaction_list' %}">Transactions</a>
-                    </div>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'AccountsApp:trippayment_list' %}">Trip Payments</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'AccountsApp:transaction_list' %}">Transactions</a>
+                </div>
             </li>
 
           </ul>

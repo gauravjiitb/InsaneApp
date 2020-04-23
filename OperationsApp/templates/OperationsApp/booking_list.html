@@ -2,6 +2,7 @@
 {% load static %}
 {% load bootstrap4 %}
 {% load bootstrap_pagination %}
+{% load crispy_forms_tags %}
 {% load my_extras %}
 
 {% block content %}
@@ -20,6 +21,7 @@
       <th scope="col">Name</th>
       <th scope="col">Phone Number</th>
       <th scope="col">Status</th>
+      <th scope="col">Owner</th>
       <th scope="col">Travel Date</th>
       <th scope="col">Destinations</th>
       <th scope="col">Lead Source</th>
@@ -33,13 +35,14 @@
     {% for booking in object_list %}
       <tr>
         <th scope="row">{{ booking.booking_date }}</th>
-        <td><a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">{{ booking.trip_id }}</a></td>
-        <td>{{ booking.lead.customer.name }}</td>
-        <td>{{ booking.lead.customer.phone }}</td>
+        <td><a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">{{ booking.lead.trip_id }}</a></td>
+        <td>{{ booking.lead.customer.user.name }}</td>
+        <td>{{ booking.lead.customer.user.phone }}</td>
         <td>{{ booking.get_status_display }}</td>
+        <td>{{ booking.owner }}</td>
         <td>{{ booking.travel_date }}</td>
-        <td>{{ booking.booked_destinations }}</td>
-        <td>{{ booking.lead.get_lead_source_display }}</td>
+        <td>{{ booking.booked_destinations.all|join:", " }}</td>
+        <td>{{ booking.lead.lead_source }}</td>
         <td>{{ booking.projected_revenue }}</td>
         <td>{{ booking.sale_amount }}</td>
         {%if user|has_group:'Operations' %}

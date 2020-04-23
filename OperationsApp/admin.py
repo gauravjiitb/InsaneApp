@@ -6,7 +6,7 @@ from OperationsApp.models import Booking
 # Create your custom admin views here.
 
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('id','lead','status','booked_destinations','sale_amount')
+    list_display = ('id','lead','status','sale_amount')
 
 # Register your models here.
 

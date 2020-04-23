@@ -18,10 +18,10 @@
     <tr>
       <th scope="col">Trip ID</th>
       <th scope="col">Name</th>
-      <th scope="col">Email Address</th>
       <th scope="col">Phone Number</th>
       <th scope="col">Status</th>
       <th scope="col">Destinations</th>
+      <th scope="col">Owner</th>
       {% if user|has_group:'Sales' %}<th scope="col">Actions</th>{% endif %}
     </tr>
   </thead>
@@ -30,11 +30,11 @@
     {% for lead in object_list %}
       <tr>
         <th scope="row">{{ lead.trip_id }}</th>
-        <td><a href="{% url 'SalesApp:lead_detail' pk=lead.pk %}">{{ lead.customer.name }}</a></td>
-        <td>{{ lead.customer.email }}</td>
-        <td>{{ lead.customer.phone }}</td>
+        <td><a href="{% url 'SalesApp:lead_detail' pk=lead.pk %}">{{ lead.customer.user.name }}</a></td>
+        <td>{{ lead.customer.user.phone }}</td>
         <td>{{ lead.get_lead_status_display }}</td>
-        <td>{{ lead.destinations }}</td>
+        <td>{{ lead.destinations.all|join:", " }}</td>
+        <td>{{ lead.owner }}</td>
         {%if user|has_group:'Sales' %}
         <td class="w-25 p-3">
           <a href="{% url 'SalesApp:lead_update' pk=lead.pk %}"><button type="button" class="btn btn-primary float-left btn-sm px-3 mx-3">Edit</button></a>

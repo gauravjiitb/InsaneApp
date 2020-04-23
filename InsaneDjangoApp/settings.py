@@ -39,18 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap4',
     'bootstrap_pagination',
+    'extra_views',
     'widget_tweaks',
     'bootstrap_modal_forms',
     'import_export',
     'phonenumber_field',
     'crispy_forms',
+    'MarketingApp',
+    'ProfilesApp',
     'SalesApp',
     'OperationsApp',
     'AccountsApp',
     'ContentApp'
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -136,9 +138,16 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static'),]
 
 STATIC_ROOT = os.path.join(BASE_DIR,'static_root')
 
-LOGIN_URL = 'dashboard'
+LOGIN_URL = 'login'
 
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
+AUTH_USER_MODEL = 'ProfilesApp.User'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+# PHONENUMBER_DB_FORMAT = 'NATIONAL'
+PHONENUMBER_DEFAULT_REGION = "IN"

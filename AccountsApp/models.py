@@ -9,19 +9,19 @@ from ContentApp.models import Vendor
 # Create your models here.
 
 class Account(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256,unique=True)
     detail = models.TextField(blank=True)
     def __str__(self):
         return self.name
 
 class TransactionHead(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256,unique=True)
     trip_bool = models.BooleanField()
     def __str__(self):
         return self.name
 
 class TripPaymentHead(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256,unique=True)
     type = models.CharField(max_length=25,choices=[('CUSTOMER','Customer'),('VENDOR','Vendor')],default='VENDOR')
     def __str__(self):
         return self.name
@@ -36,7 +36,7 @@ class Transaction(models.Model):
     inout_type = models.CharField(max_length=25,choices=[('DR','Debit'),('CR','Credit')])
     balance = models.DecimalField(max_digits=19,decimal_places=2)
     transaction_head = models.ForeignKey(TransactionHead,related_name='Transactions',on_delete=models.PROTECT)
-    remarks = models.CharField(max_length=256,blank=True,null=True)
+    remarks = models.CharField(max_length=256,blank=True)
     reconcile_details = models.CharField(max_length=500,blank=True)
     reconcile_status_bool = models.BooleanField(editable=False,default=False)
 

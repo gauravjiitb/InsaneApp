@@ -1,0 +1,58 @@
+{% extends "base_staff.html" %}
+
+{% block content %}
+
+<div class="container w-50 p-3">
+  <br>
+  <div class="jumbotron">
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail">Name</th>
+        <td>{{ customer.user.name }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Email Address</th>
+        <td>{{ customer.user.email }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Phone Number</th>
+        <td>{{ customer.user.phone }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Leads</th>
+        <td>
+          <ul>
+            {% for lead in leads %}
+            <a href="{% url 'SalesApp:lead_detail' pk=lead.pk %}">
+              <li>{{ lead.trip_id }} ({{lead.destinations.all|join:", "}})</li></a>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Bookings</th>
+        <td>
+          <ul>
+            {% for booking in bookings %}
+            <a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">
+              <li>{{ booking.lead.trip_id }} ({{booking.booked_destinations.all|join:", "}})</li></a>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <form method="GET" action="{% url 'SalesApp:lead_create' %}">
+      <input type="hidden" name="customer_id" value="{{customer.id}}">
+        <button class="btn btn-warning btn-lg float-right" type="submit">Create Lead</button>
+    </form>
+
+    <a href="{% url 'ProfilesApp:customer_update' pk=customer.pk %}">
+      <button class="btn btn-warning btn-lg float-right px-5 mx-3" type="submit">Edit</button> </a>
+
+    <br>
+  </div>
+
+</div>
+
+{% endblock %}

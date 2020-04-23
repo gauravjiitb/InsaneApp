@@ -28,9 +28,13 @@ urlpatterns = [
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete',),
     path('',auth_views.LoginView.as_view(template_name='registration/login_staff.html'),name='login'),
     path('logout/',auth_views.LogoutView.as_view(),name='logout'),
+
+    path('profiles/',include('ProfilesApp.urls',namespace='ProfilesApp')),
+    path('marketing/',include('MarketingApp.urls',namespace='MarketingApp')),
     path('sales/',include('SalesApp.urls',namespace='SalesApp')),
     path('operations/', include('OperationsApp.urls',namespace='OperationsApp')),
     path('accounts/',include('AccountsApp.urls',namespace='AccountsApp')),
-    path('dashboard/',main_views.DashboardView,name='dashboard'),
+
+    path('dashboard/',main_views.DashboardView.as_view(),name='dashboard'),
     path('403/',TemplateView.as_view(template_name='error_page_403.html'),name='error403'),
     ]

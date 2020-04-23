@@ -1,0 +1,55 @@
+{% extends 'base_staff.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load bootstrap_pagination %}
+{% load my_extras %}
+
+{% block content %}
+  <br>
+
+  <form class="form-group" method="get">
+      {{filter.form}}
+      <input class="btn btn-primary float-right" type="submit" value='Search' />
+  </form>
+
+  <table class="table table-bordered table-hover table-secondary">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Name</th>
+      <th scope="col">Follow Up Date</th>
+      <th scope="col">Remarks</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone Number</th>
+      <th scope="col">Owner</th>
+      <th scope="col">Source</th>
+      <th scope="col">Destinations</th>
+      {% if user|has_group:'Marketing' %}<th scope="col">Actions</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for inquiry in object_list %}
+      <tr>
+        <th scope="row">{{ inquiry.creation_date }}</th>
+        <td><a href="{% url 'MarketingApp:inquiry_detail' pk=inquiry.pk %}">{{ inquiry.name }}</a></td>
+        <td>{{ inquiry.follow_up_date }}</td>
+        <td>{{ inquiry.remarks }}</td>
+        <td>{{ inquiry.email }}</td>
+        <td>{{ inquiry.phone }}</td>
+        <td>{{ inquiry.owner }}</td>
+        <td>{{ inquiry.source }}</td>
+        <td>{{ inquiry.places.all|join:", " }}</td>
+        {%if user|has_group:'Marketing' %}
+        <td class="">
+          <a href="{% url 'MarketingApp:inquiry_update' pk=inquiry.pk %}"><button type="button" class="btn btn-primary float-left btn-sm px-3 mx-3">Edit</button></a>
+        </td>
+        {% endif %}
+
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% bootstrap_paginate page_obj range=5 %}
+
+{% endblock %}

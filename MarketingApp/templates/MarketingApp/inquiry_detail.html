@@ -1,0 +1,66 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load my_extras %}
+{% block content %}
+
+<div class="container w-50 p-3">
+  <br>
+  <div class="jumbotron">
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Creation Date</th>
+        <td>{{ inquiry.creation_date }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Name</th>
+        <td>{{ inquiry.name }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Follow Up Date</th>
+        <td>{{ inquiry.follow_up_date }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Remarks</th>
+        <td>{{ inquiry.remarks }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Email Address</th>
+        <td>{{ inquiry.email }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Phone Number</th>
+        <td>{{ inquiry.phone }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Description</th>
+        <td>{{ inquiry.description }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Places</th>
+        <td>{{ inquiry.places.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Lead Source</th>
+        <td>{{ inquiry.source }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">ID at Inquiry Source</th>
+        <td>{{ inquiry.id_at_source }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Status</th>
+        <td>{{ inquiry.status }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Inquiry Owner</th>
+        <td>{{ inquiry.owner }}</td>
+      </tr>
+    </table>
+
+    <br>
+    <a href="{% url 'MarketingApp:inquiry_update' pk=inquiry.pk %}"><button class="btn btn-warning btn-lg float-right mx-3 px-5" type="submit">Edit </button></a>
+    <a href="{% url 'MarketingApp:inquiry_assign' pk=inquiry.pk %}"><button class="btn btn-warning btn-lg float-right" type="submit">Change Inquiry Owner</button></a>
+  </div>
+</div>
+
+{% endblock %}
