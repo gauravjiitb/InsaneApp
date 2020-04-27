@@ -64,6 +64,11 @@
         <button class="btn btn-warning btn-lg float-right" type="submit">Create Booking</button>
     </form>
 
+    <form method="GET" action="{% url 'SalesApp:quote_create' %}">
+      <input type="hidden" name="lead_id" value="{{lead.id}}">
+        <button class="btn btn-warning btn-lg float-right mx-3" type="submit">Create Quote</button>
+    </form>
+
     <a href="{% url 'SalesApp:lead_update' pk=lead.pk %}"> <button class="btn btn-warning btn-lg float-right px-5 mx-3" type="submit">Edit </button> </a>
 
     <br>

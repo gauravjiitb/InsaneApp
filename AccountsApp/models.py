@@ -9,19 +9,19 @@ from ContentApp.models import Vendor
 # Create your models here.
 
 class Account(models.Model):
-    name = models.CharField(max_length=256,unique=True)
+    name = models.CharField(max_length=255,unique=True)
     detail = models.TextField(blank=True)
     def __str__(self):
         return self.name
 
 class TransactionHead(models.Model):
-    name = models.CharField(max_length=256,unique=True)
+    name = models.CharField(max_length=255,unique=True)
     trip_bool = models.BooleanField()
     def __str__(self):
         return self.name
 
 class TripPaymentHead(models.Model):
-    name = models.CharField(max_length=256,unique=True)
+    name = models.CharField(max_length=255,unique=True)
     type = models.CharField(max_length=25,choices=[('CUSTOMER','Customer'),('VENDOR','Vendor')],default='VENDOR')
     def __str__(self):
         return self.name

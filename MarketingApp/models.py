@@ -10,7 +10,7 @@ from ProfilesApp.models import Staff
 # Create your models here.
 
 class LeadSource(models.Model):
-    name = models.CharField(max_length=256,unique=True)
+    name = models.CharField(max_length=255,unique=True)
 
     def __str__(self):
         return self.name
@@ -33,10 +33,10 @@ class Inquiry(models.Model):
     creation_date = models.DateField(editable=False,auto_now=True)
     name = models.CharField(max_length=256)
     follow_up_date = models.DateField(blank=True,null=True)
-    remarks = models.CharField(max_length=256,blank=True)
+    remarks = models.CharField(max_length=255,blank=True)
     email = models.EmailField(blank=True)
     phone = PhoneNumberField(blank=True)
-    description = models.CharField(max_length=256,blank=True)
+    description = models.CharField(max_length=255,blank=True)
     places = models.ManyToManyField(Destination,related_name='Inquiries',blank=True)
     source = models.ForeignKey(LeadSource,related_name='Inquiries',blank=True,null=True,on_delete=models.PROTECT)
     id_at_source = models.CharField(max_length=30,blank=True)

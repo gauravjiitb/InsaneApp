@@ -1,20 +1,23 @@
 from django.db import models
+from django.db.models import Model
 from django.urls import reverse
+
+from django_mysql.models import ListCharField
 
 from MarketingApp.models import LeadSource
 from ProfilesApp.models import Customer,Staff
-from ContentApp.models import Destination
+from ContentApp.models import Destination,City,Hotel,Transfer,Sightseeing
 
 #########################################
 # HELPER FUNCTIONS
 
 def get_trip_id():
-    # try:
-    last_lead = Lead.objects.all().order_by('id').last()
-    new_trip_id = "IN"+ str(170002+last_lead.id)
-    return new_trip_id
-    # except:
-    #     return 'IN170001'
+    try:
+        last_lead = Lead.objects.all().order_by('id').last()
+        new_trip_id = "IN"+ str(17000+last_lead.id)
+        return new_trip_id
+    except:
+        return 'IN170001'
 
 
 #########################################
@@ -45,3 +48,44 @@ class Lead(models.Model):
     def __str__(self):
         lead_display_name =  '{} - {}'.format(self.trip_id, self.customer.user.name)
         return lead_display_name
+
+
+class Quote(models.Model):
+    lead = models.ForeignKey(Lead,on_delete=models.PROTECT)
+    adults = models.PositiveSmallIntegerField()
+    children = models.PositiveSmallIntegerField(blank=True,null=True)
+    children_age = models.CharField(max_length=20,blank=True,null=True)
+    title = models.CharField(max_length=100)
+    starting_place = models.CharField(max_length=100)
+    destinations = models.ManyToManyField(Destination)
+    cities = models.ManyToManyField(City)
+
+    @property
+    def children_age_list(age_string):
+        age_list = list(age_string.split(","))
+        for i in range(len(age_list)):
+            age_list[i] = int(age_list[i])
+        return age_list
+
+class QuoteHotelInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    city = models.ForeignKey(City,on_delete=models.PROTECT)
+    hotel = models.ForeignKey(Hotel,on_delete=models.PROTECT)
+    checkin_date = models.DateField()
+    checkout_date = models.DateField()
+    room_type = models.CharField(max_length=100,blank=True)
+    no_of_rooms = models.PositiveSmallIntegerField()
+    price = models.FloatField()
+
+class QuoteTransferInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    city = models.ForeignKey(City,on_delete=models.PROTECT)
+    transfer = models.ForeignKey(Transfer,on_delete=models.PROTECT)
+    date = models.DateField()
+    quantity = models.PositiveSmallIntegerField()
+
+class QuoteSightseeingInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    city = models.ForeignKey(City,on_delete=models.PROTECT)
+    sightseeing = models.ForeignKey(Sightseeing,on_delete=models.PROTECT)
+    date = models.DateField()

@@ -34,6 +34,7 @@ urlpatterns = [
     path('sales/',include('SalesApp.urls',namespace='SalesApp')),
     path('operations/', include('OperationsApp.urls',namespace='OperationsApp')),
     path('accounts/',include('AccountsApp.urls',namespace='AccountsApp')),
+    path('content/',include('ContentApp.urls',namespace='ContentApp')),
 
     path('dashboard/',main_views.DashboardView.as_view(),name='dashboard'),
     path('403/',TemplateView.as_view(template_name='error_page_403.html'),name='error403'),
