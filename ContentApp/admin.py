@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ContentApp.models import Destination,City,Hotel,Transfer,Sightseeing,Vendor
+from ContentApp.models import Destination,City,Hotel,Transfer,Sightseeing,Vendor,Visa,Insurance
 
 class DestinationAdmin(admin.ModelAdmin):
     list_display = ('id','name')
@@ -22,3 +22,5 @@ admin.site.register(Hotel)
 admin.site.register(Transfer)
 admin.site.register(Sightseeing)
 admin.site.register(Vendor,VendorAdmin)
+admin.site.register(Visa)
+admin.site.register(Insurance)

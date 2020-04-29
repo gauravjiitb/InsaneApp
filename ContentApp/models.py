@@ -56,7 +56,6 @@ class Transfer(models.Model):
 
     # class Meta:
     #     constraints = [models.UniqueConstraint(fields=['city', 'name','transfer_type','max_pax'], name='unique_transfer_in_city')]
-
     def __str__(self):
         return '{} | {} | {} pax'.format(self.name, self.transfer_type, self.max_pax)
 
@@ -74,15 +73,22 @@ class Sightseeing(models.Model):
 
 class Visa(models.Model):
     name = models.CharField(max_length=255,unique=True)
-    destination = models.ManyToManyField(Destination,related_name='Visas')
+    destinations = models.ManyToManyField(Destination,related_name='Visas')
     adult_price = models.FloatField()
     child_price = models.FloatField()
 
+    def __str__(self):
+        return self.name
+
 class Insurance(models.Model):
-    name = models.CharField(max_length=255,unique=True)
+    insurer = models.CharField(max_length=255)
     duration = models.PositiveSmallIntegerField() # in Days
-    coverage = models.IntegerField() # in USD
+    destinations = models.ManyToManyField(Destination,related_name='Insurances')
+    coverage = models.PositiveIntegerField() # in USD
     price = models.FloatField()
+
+    def __str__(self):
+        return '{} | {} USD | {} Days'.format(self.insurer, self.coverage, self.duration)
 
 class Vendor(models.Model):
     name = models.CharField(max_length=255,unique=True)

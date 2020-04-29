@@ -6,7 +6,7 @@ from django_mysql.models import ListCharField
 
 from MarketingApp.models import LeadSource
 from ProfilesApp.models import Customer,Staff
-from ContentApp.models import Destination,City,Hotel,Transfer,Sightseeing
+from ContentApp.models import Destination,City,Hotel,Transfer,Sightseeing,Visa,Insurance
 
 #########################################
 # HELPER FUNCTIONS
@@ -59,6 +59,8 @@ class Quote(models.Model):
     starting_place = models.CharField(max_length=100)
     destinations = models.ManyToManyField(Destination)
     cities = models.ManyToManyField(City)
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     @property
     def children_age_list(age_string):
@@ -89,3 +91,17 @@ class QuoteSightseeingInfo(models.Model):
     city = models.ForeignKey(City,on_delete=models.PROTECT)
     sightseeing = models.ForeignKey(Sightseeing,on_delete=models.PROTECT)
     date = models.DateField()
+
+class QuoteVisaInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    visa = models.ForeignKey(Visa,on_delete=models.PROTECT)
+
+class QuoteInsuranceInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    insurance = models.ForeignKey(Insurance,on_delete=models.PROTECT,blank=True,null=True)
+
+class QuoteItineraryInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    date = models.DateField()
+    ordering = models.CharField(max_length=255,blank=True)
+    description = models.TextField(blank=True)

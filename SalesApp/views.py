@@ -1,18 +1,29 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from django.views.generic import TemplateView,ListView,DetailView,CreateView,UpdateView,DeleteView
+from django.views.generic import TemplateView,ListView,DetailView,CreateView,UpdateView
 from django.urls import reverse_lazy,reverse
-# from django.contrib.auth.decorators import user_passes_test
-from django_filters.views import FilterView
-from django.views.generic.edit import ModelFormMixin
-from bootstrap_modal_forms.generic import BSModalCreateView,BSModalUpdateView
+from datetime import timedelta
 
-from SalesApp.models import Lead,Quote,QuoteHotelInfo,QuoteTransferInfo,QuoteSightseeingInfo
+from django_filters.views import FilterView
+
+from SalesApp.models import (Lead,Quote,QuoteHotelInfo,
+                                  QuoteTransferInfo,
+                                  QuoteSightseeingInfo,
+                                  QuoteVisaInfo,
+                                  QuoteInsuranceInfo,
+                                  QuoteItineraryInfo)
 from ProfilesApp.models import Customer
 from OperationsApp.models import Booking
 from ContentApp.models import Destination,City, Hotel, Transfer, Sightseeing
-from SalesApp.forms import LeadForm, QuoteForm, QuotePaxDetailForm, QuotePlacesDetailForm,QuoteHotelInfoFormSet,QuoteTransferInfoFormSet,QuoteSightseeingInfoFormSet
 from SalesApp.filters import LeadFilter
+from SalesApp.forms import (LeadForm, QuoteForm,
+                                      QuoteHotelInfoFormSet,
+                                      QuoteTransferInfoFormSet,
+                                      QuoteSightseeingInfoFormSet,
+                                      QuoteVisaInfoFormSet,
+                                      QuoteInsuranceInfoFormSet,
+                                      QuoteItineraryInfoFormSet)
+
 
 
 
@@ -53,8 +64,6 @@ class LeadCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
     def test_func(self):
         return self.request.user.groups.filter(name='Sales').exists()
 
-
-
 class LeadUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     form_class = LeadForm
     model = Lead
@@ -90,60 +99,141 @@ def quote_load_sightseeings(request):
     sightseeings = Sightseeing.objects.filter(city__id=city_id).order_by('name')
     return render(request, 'SalesApp/quote_form/sightseeings_dropdown_options.html', {'sightseeings': sightseeings})
 
-def quote_pax_details(request):
-    template_name = 'SalesApp/quote_form/pax_details.html'
-    if request.method == 'POST':
-        pass
-    else:
-        pax_form = QuotePaxDetailForm()
-        places_form = QuotePlacesDetailForm()
-    return render(request,template_name,{'pax_form':pax_form,'places_form':places_form})
 
 ###############################
 
-def quote_create(request,pk=None):
+def quote_create_update(request,pk=None):
     template_name = 'SalesApp/quote_form.html'
     initial_quote = Quote.objects.get(id=pk) if pk else None
+    itinerary_objects_list = []
+    itinerary_choices_objects_list = []
+
+    # TRANSLATES THE ITINERARY ORDERING INTO OBJECTS LISTS
+    def create_itinerary_lists(initial_quote,ordering_list=None):
+        itinerary_objects_list = []
+        itinerary_choices_objects_list = []
+        if not initial_quote.quoteitineraryinfo_set.all():
+            duration = (initial_quote.end_date - initial_quote.start_date).days + 1
+            date = initial_quote.start_date
+            for i in range(duration):
+                QuoteItineraryInfo.objects.create(quote=initial_quote,date=date)
+                date = date + timedelta(days=1)
+                itinerary_objects_list.append([])
+            itinerary_choices_objects_list = list(initial_quote.quotetransferinfo_set.all()) + list(initial_quote.quotesightseeinginfo_set.all())
+        else:
+            transfer_qs_remove_ids = []
+            sightseeing_qs_remove_ids = []
+            if ordering_list is None:
+                ordering_list = []
+                for object in initial_quote.quoteitineraryinfo_set.all():
+                    ordering_list.append(object.ordering)
+            for ordering in ordering_list:
+                items = ordering.split(',')
+                object_list = []
+                for item in items:
+                    if item:
+                        x = item.split('-')
+                        object_type = x[0]
+                        id = int(x[1])
+                        if object_type == 'transfer':
+                            transfer_qs_remove_ids.append(id)
+                            object_list.append(QuoteTransferInfo.objects.get(id=id))
+                        else:
+                            sightseeing_qs_remove_ids.append(id)
+                            object_list.append(QuoteSightseeingInfo.objects.get(id=id))
+                itinerary_objects_list.append(object_list)
+            transfer_choices_qs = QuoteTransferInfo.objects.filter(quote=initial_quote).exclude(id__in=transfer_qs_remove_ids)
+            sightseeing_choices_qs = QuoteSightseeingInfo.objects.filter(quote=initial_quote).exclude(id__in=sightseeing_qs_remove_ids)
+            itinerary_choices_objects_list = list(transfer_choices_qs) + list(sightseeing_choices_qs)
+        return itinerary_objects_list,itinerary_choices_objects_list
 
     if request.method == 'POST':
-        form = QuoteForm(request.POST,instance=initial_quote)
-        hotel_formset = QuoteHotelInfoFormSet(request.POST,prefix='hotel')
-        transfer_formset = QuoteTransferInfoFormSet(request.POST,prefix='transfer')
-        sightseeing_formset = QuoteSightseeingInfoFormSet(request.POST,prefix='sightseeing')
-        # if not form.is_valid():
-        #     print('FORM NOT VALID')
-        #     print(form.errors)
-        # if not hotel_formset.is_valid():
-        #     print('HOTEL FORMSET NOT VALID')
-        # if not transfer_formset.is_valid():
-        #     print('TRANSFER FORMSET NOT VALID')
+        quote_form = QuoteForm(request.POST,instance=initial_quote)
+        if quote_form.is_valid():
+            quote = quote_form.save()
+            initial = [{'quote':quote}]
+        else:
+            initial = []
 
-        if form.is_valid() and hotel_formset.is_valid() and transfer_formset.is_valid() and sightseeing_formset.is_valid():
-            print('FORM, HOTEL FORMSET, TRANSFER FORMSETn SIGHTSEEING FORMSET ARE VALID.')
-            quote = form.save()
+        hotel_formset = QuoteHotelInfoFormSet(request.POST,prefix='hotel',initial=initial)
+        transfer_formset = QuoteTransferInfoFormSet(request.POST,prefix='transfer',initial=initial)
+        sightseeing_formset = QuoteSightseeingInfoFormSet(request.POST,prefix='sightseeing',initial=initial)
+        visa_formset = QuoteVisaInfoFormSet(request.POST,prefix='visa',initial=initial)
+        insurance_formset = QuoteInsuranceInfoFormSet(request.POST,prefix='insurance',initial=initial)
+        itinerary_formset = QuoteItineraryInfoFormSet(request.POST,prefix='itinerary',initial=initial)
+        if itinerary_formset.is_valid(): # GETS THE ITINERARY ORDERING TO CONVERT THEM IN OBJECTS LIST FOR VIEW, IF THERE IS ERROR IN SAVING.
+            ordering_list = []
+            for form in itinerary_formset:
+                ordering_list.append(form['ordering'].value())
+            itinerary_objects_list,itinerary_choices_objects_list = create_itinerary_lists(initial_quote=initial_quote,ordering_list=ordering_list)
 
-            hotels = hotel_formset.save(commit=False)
-            for hotel in hotels:
-                hotel.quote = quote
+        if (quote_form.is_valid() and hotel_formset.is_valid() and
+                                transfer_formset.is_valid() and
+                                sightseeing_formset.is_valid() and
+                                visa_formset.is_valid() and
+                                insurance_formset.is_valid() and
+                                itinerary_formset.is_valid()):
+            print('QUOTE FORM AND ALL FORMSETS ARE VALID.')
+
+            # hotels = hotel_formset.save(commit=False)
+            # for hotel in hotels:
+            #     hotel.quote = quote
             hotel_formset.save()
 
-            transfers = transfer_formset.save(commit=False)
-            for transfer in transfers:
-                transfer.quote = quote
+            # transfers = transfer_formset.save(commit=False)
+            # for transfer in transfers:
+            #     transfer.quote = quote
             transfer_formset.save()
 
-            sightseeings = sightseeing_formset.save(commit=False)
-            for sightseeing in sightseeings:
-                sightseeing.quote = quote
+            # sightseeings = sightseeing_formset.save(commit=False)
+            # for sightseeing in sightseeings:
+            #     sightseeing.quote = quote
             sightseeing_formset.save()
 
-            return HttpResponseRedirect(reverse('dashboard'))
+            # visas = visa_formset.save(commit=False)
+            # for visa in visas:
+            #     visa.quote = quote
+            visa_formset.save()
+
+            # insurances = insurance_formset.save(commit=False)
+            # for insurance in insurances:
+            #     insurance.quote = quote
+            insurance_formset.save()
+
+            itineraries = itinerary_formset.save(commit=False)
+            for itinerary in itineraries:
+                itinerary.quote = quote
+            itinerary_formset.save()
+
+            if request.POST.get('redirect') == 'False':
+                return HttpResponseRedirect(reverse('SalesApp:quote_update', args=[quote.id]))
+            else:
+                return HttpResponseRedirect(reverse('dashboard'))
     else:
-        form = QuoteForm(instance=initial_quote)
+        try: # GET LEAD ID IF QUOTE CREATION REQUEST CAME FROM LEAD PAGE.
+            lead_id = request.GET['lead_id']
+        except:
+            lead_id = None
+
+        quote_form = QuoteForm(instance=initial_quote) if not lead_id else QuoteForm(initial={'lead':Lead.objects.get(id=lead_id)})
         hotel_formset = QuoteHotelInfoFormSet(queryset=QuoteHotelInfo.objects.filter(quote=initial_quote),prefix='hotel')
         transfer_formset = QuoteTransferInfoFormSet(queryset=QuoteTransferInfo.objects.filter(quote=initial_quote),prefix='transfer')
         sightseeing_formset = QuoteSightseeingInfoFormSet(queryset=QuoteSightseeingInfo.objects.filter(quote=initial_quote),prefix='sightseeing')
-    return render(request, template_name, {'form':form,'hotel_formset':hotel_formset,'transfer_formset':transfer_formset,'sightseeing_formset':sightseeing_formset})
+        visa_formset = QuoteVisaInfoFormSet(queryset=QuoteVisaInfo.objects.filter(quote=initial_quote),prefix='visa')
+        insurance_formset = QuoteInsuranceInfoFormSet(queryset=QuoteInsuranceInfo.objects.filter(quote=initial_quote),prefix='insurance')
+        itinerary_formset = QuoteItineraryInfoFormSet(queryset=QuoteItineraryInfo.objects.filter(quote=initial_quote),prefix='itinerary')
+        if initial_quote:
+            itinerary_objects_list,itinerary_choices_objects_list = create_itinerary_lists(initial_quote=initial_quote)
+        # insurance_formset.extra = 2
+    return render(request, template_name, {'itinerary_choices_objects_list':itinerary_choices_objects_list,
+                                           'itinerary_objects_list':itinerary_objects_list,
+                                           'quote_form':quote_form,
+                                           'hotel_formset':hotel_formset,
+                                           'transfer_formset':transfer_formset,
+                                           'sightseeing_formset':sightseeing_formset,
+                                           'visa_formset':visa_formset,
+                                           'insurance_formset':insurance_formset,
+                                           'itinerary_formset':itinerary_formset})
 
 
 # class QuoteCreateView(CreateView):

@@ -100,3 +100,6 @@ $(".sightseeing-selections select[id*='city']").change(function () {
     }
   });
 });
+
+
+// SCRIPT FOR VARYING DESTINATIONS SELECTION IN VISA/INSURANCE FIELDS BASED ON DESTINATIONS SELECTED IN QUOTE INFO

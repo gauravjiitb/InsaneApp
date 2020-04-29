@@ -13,14 +13,12 @@ urlpatterns = [
     path('lead/create/',views.LeadCreateView.as_view(),name='lead_create'),
     path('lead/<int:pk>/update',views.LeadUpdateView.as_view(),name='lead_update'),
 
-    path('quote/create/',views.quote_create,name='quote_create'),
+    path('quote/create/',views.quote_create_update,name='quote_create'),
     path('ajax/quote/load-cities/', views.quote_load_cities, name='ajax_quote_load_cities'),
     path('ajax/quote/load-hotels/', views.quote_load_hotels, name='ajax_quote_load_hotels'),
     path('ajax/quote/load-transfers/', views.quote_load_transfers, name='ajax_quote_load_transfers'),
     path('ajax/quote/load-sightseeings/', views.quote_load_sightseeings, name='ajax_quote_load_sightseeings'),
-    # path('ajax/quote/load-cities/', views.quote_load_cities, name='ajax_quote_load_transfers'),
-    # path('ajax/quote/load-cities/', views.quote_load_cities, name='ajax_quote_load_sightseeings'),
-    path('quote/create/pax-details/',views.quote_pax_details,name='quote_create_pax_details'),
+    # path('quote/create/pax-details/',views.quote_pax_details,name='quote_create_pax_details'),
 
-    path('quote/<int:pk>/update',views.quote_create,name='quote_update'),
+    path('quote/<int:pk>/update',views.quote_create_update,name='quote_update'),
 ]

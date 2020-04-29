@@ -1,6 +1,7 @@
 {% extends "base_staff.html" %}
 {% load static %}
 {% load bootstrap4 %}
+{% load widget_tweaks %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -16,30 +17,34 @@
                                        data-sightseeings-url="{% url 'SalesApp:ajax_quote_load_sightseeings' %}" novalidate>
     {% csrf_token %}
     {% if view_error %}{{ view_error }}{% endif %}
-    {% if form.errors %}{{form.non_field_errors}}{% endif %}
+    {% if form.errors %}{{quote_form.non_field_errors}}{% endif %}
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            {{ form.lead|as_crispy_field }}
-            {{ form.title|as_crispy_field }}
-            {{ form.starting_place|as_crispy_field }}
-            {{ form.adults|as_crispy_field }}
-            {{ form.children|as_crispy_field }}
-            {{ form.children_age|as_crispy_field }}
+            {{ quote_form.lead|as_crispy_field }}
+            {{ quote_form.title|as_crispy_field }}
+            {{ quote_form.starting_place|as_crispy_field }}
+            {{ quote_form.adults|as_crispy_field }}
+            {{ quote_form.children|as_crispy_field }}
+            {{ quote_form.children_age|as_crispy_field }}
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            {{ form.destinations|as_crispy_field }}
-            {{ form.cities|as_crispy_field }}
+            {{ quote_form.start_date|as_crispy_field }}
+            {{ quote_form.end_date|as_crispy_field }}
+            {{ quote_form.destinations|as_crispy_field }}
+            {{ quote_form.cities|as_crispy_field }}
           </div>
         </div>
       </div>
     </div>
     <br>
+    <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
+    <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
 
 
     </div>
@@ -98,16 +103,140 @@
       </div>
     </div>
 
+    <br>
+
+    <div class="card">
+      <div class="card-body">
+        <h6>Visa, Insurance Details</h6>
+        <hr>
+          {{ visa_formset.management_form|crispy }}
+          {% for form in visa_formset %}
+            <div class="visa-insurance-selections row justify-content-center">
+              {% for field in form %}
+                <div class="col"> {{ field|as_crispy_field }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+          <hr>
+          {{ insurance_formset.management_form|crispy }}
+          {% for form in insurance_formset %}
+            <div class="visa-insurance-selections row justify-content-center">
+              {% for field in form %}
+                <div class="col"> {{ field|as_crispy_field }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+      </div>
+    </div>
 
     <br>
-    <button class="btn btn-primary btn-lg float-right px-5" type="submit">Save</button>
-    </form>
+    <div class="row">
+      <div class="col">
+        <br>
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
+        <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
+      </div>
+    </div>
   </div>
 </div>
 
+<div class="container">
+  <div class="jumbotron">
+    <h6>Itinerary Details</h6>
+    <hr>
+    <small>To organize the itinerary, drag the items from right container to respective days in left container.
+      Itinerary can only be organized after you have selected the inclusions.</small>
+    <hr>
+
+    <div class="row">
+      <div class="col">
+        <h6>Day to day Itinerary</h6>
+        {% for object_list in itinerary_objects_list %}
+        <div class="card itinerary-card">
+          <p>Day {{forloop.counter}}</p>
+          <div class="sortable included-elements card-body">
+            {% for object in object_list %}
+              {% if object.transfer %}
+                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transfer-{{object.id}}">{{ object.transfer }}</p>
+              {% endif %}
+              {% if object.sightseeing %}
+                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="sightseeing-{{object.id}}">{{ object.sightseeing }}</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="col">
+        <h6>All Transfers and Sightseeing</h6>
+        <div class="card">
+          <div class=" sortable card-body">
+            {% for object in itinerary_choices_objects_list %}
+              {% if object.transfer %}
+                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transfer-{{object.id}}">{{ object.transfer }}</p>
+              {% endif %}
+              {% if object.sightseeing %}
+                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="sightseeing-{{object.id}}">{{ object.sightseeing }}</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      {{ itinerary_formset.management_form|crispy }}
+      {% for form in itinerary_formset %}
+        <div class="itinerary-selections row justify-content-center d-none">
+          {% for field in form %}
+            <div class="col"> {{ field|as_crispy_field }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <br>
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
+        <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 <script src="{% static "js/salesapp_quote_form.js" %}"></script>
 
-{# <script>
+<script>
+// THIS SCRIPT COPIES THE ORDER OF ELEMENTS IN ITINERARY AND COPIES IT TO ITINERARY FORMSET.
+$( function() {
+  $( ".sortable" ).sortable({
+    revert: true
+  });
+  $( ".draggable" ).draggable({
+    connectToSortable: ".sortable",
+    revert: "invalid"
+  });
+  $(".sortable").on("sortreceive", function(event,ui){
+    var i=0;
+    $(".sortable.included-elements").each(function(){
+      var x = $(this).sortable("toArray");
+      console.log(x);
+      $("input[name*="+i+"-ordering]").val(x);
+      i = i + 1;
+    });
+  });
+  $( ".draggable" ).disableSelection();
+});
+</script>
+
+
+<script>
   var city_ids = $("#id_cities").val()
   template = "<option value=''>---------</option>"
   for (var i = 0; i < city_ids.length; i++) {
@@ -120,6 +249,6 @@
       $(this).html(template);
     }
   });
-</script> #}
+</script>
 
 {% endblock %}

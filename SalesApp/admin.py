@@ -1,5 +1,5 @@
 from django.contrib import admin
-from SalesApp.models import Lead,Quote,QuoteHotelInfo, QuoteTransferInfo
+from SalesApp.models import Lead,Quote,QuoteHotelInfo, QuoteTransferInfo,QuoteSightseeingInfo,QuoteVisaInfo,QuoteInsuranceInfo,QuoteItineraryInfo
 
 # Create your custom admin views here.
 
@@ -15,3 +15,7 @@ admin.site.register(Lead,LeadAdmin)
 admin.site.register(Quote,QuoteAdmin)
 admin.site.register(QuoteHotelInfo)
 admin.site.register(QuoteTransferInfo)
+admin.site.register(QuoteSightseeingInfo)
+admin.site.register(QuoteVisaInfo)
+admin.site.register(QuoteInsuranceInfo)
+admin.site.register(QuoteItineraryInfo)
