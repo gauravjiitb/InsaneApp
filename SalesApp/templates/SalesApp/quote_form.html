@@ -8,7 +8,7 @@
 <div class="container w-75 p-3">
   <br>
   <div class="jumbotron">
-    <h2 align='center'>Please fill the details below.</h2>
+    <h4 align='center'>Basic Details</h4>
     <br>
 
     <form method="POST" id="quoteForm" data-cities-url="{% url 'SalesApp:ajax_quote_load_cities' %}"
@@ -46,13 +46,58 @@
     <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
     <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
 
+  </div>
+</div>
 
-    </div>
-    </div>
 
-
-<div class="">
+<div class="container">
   <div class="jumbotron">
+
+    <div class="card">
+      <div class="card-body">
+        <h6>Flight Details</h6>
+        <hr>
+          {{ flight_formset.management_form|crispy }}
+          {% for form in flight_formset %}
+            <div class="flight-selections row justify-content-center">
+                <div class="col">
+                  <div class="row">
+                    <div class="col"> {{ form.airline|as_crispy_field }}</div>
+                    <div class="col"> {{ form.price|as_crispy_field }}</div>
+                    {{ form.id }}
+                    <div class="col-2"> {{ form.DELETE|as_crispy_field }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col"> {{ form.details|as_crispy_field }}</div>
+                  </div>
+                </div>
+            </div>
+            <hr>
+          {% endfor %}
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <div class="card-body">
+        <h6>Transport Details</h6>
+        <hr>
+          {{ transport_formset.management_form|crispy }}
+          {% for form in transport_formset %}
+            <div class="transport-selections row justify-content-center">
+                <div class="col"> {{ form.type|as_crispy_field }}</div>
+                <div class="col"> {{ form.date|as_crispy_field }}</div>
+                <div class="col-6"> {{ form.details|as_crispy_field }}</div>
+                <div class="col"> {{ form.price|as_crispy_field }}</div>
+                {{ form.id }}
+                <div class="col"> {{ form.DELETE|as_crispy_field }}</div>
+            </div>
+          {% endfor %}
+      </div>
+    </div>
+
+    <br>
 
     <div class="card">
       <div class="card-body">
@@ -61,9 +106,15 @@
           {{ hotel_formset.management_form|crispy }}
           {% for form in hotel_formset %}
             <div class="hotel-selections row justify-content-center">
-              {% for field in form %}
-                <div class="col"> {{ field|as_crispy_field }}</div>
-              {% endfor %}
+                <div class="col"> {{ form.city|as_crispy_field }}</div>
+                <div class="col"> {{ form.hotel|as_crispy_field }}</div>
+                <div class="col"> {{ form.checkin_date|as_crispy_field }}</div>
+                <div class="col"> {{ form.checkout_date|as_crispy_field }}</div>
+                <div class="col"> {{ form.room_type|as_crispy_field }}</div>
+                <div class="col"> {{ form.no_of_rooms|as_crispy_field }}</div>
+                <div class="col"> {{ form.price|as_crispy_field }}</div>
+                {{ form.id }}
+                <div class="col-1"> {{ form.DELETE|as_crispy_field }}</div>
             </div>
           {% endfor %}
       </div>
@@ -78,9 +129,12 @@
           {{ transfer_formset.management_form|crispy }}
           {% for form in transfer_formset %}
             <div class="transfer-selections row justify-content-center">
-              {% for field in form %}
-                <div class="col"> {{ field|as_crispy_field }}</div>
-              {% endfor %}
+                <div class="col"> {{ form.city|as_crispy_field }}</div>
+                <div class="col"> {{ form.transfer|as_crispy_field }}</div>
+                <div class="col"> {{ form.date|as_crispy_field }}</div>
+                <div class="col"> {{ form.quantity|as_crispy_field }}</div>
+                {{ form.id }}
+                <div class="col"> {{ form.DELETE|as_crispy_field }}</div>
             </div>
           {% endfor %}
       </div>
@@ -95,35 +149,11 @@
           {{ sightseeing_formset.management_form|crispy }}
           {% for form in sightseeing_formset %}
             <div class="sightseeing-selections row justify-content-center">
-              {% for field in form %}
-                <div class="col"> {{ field|as_crispy_field }}</div>
-              {% endfor %}
-            </div>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Visa, Insurance Details</h6>
-        <hr>
-          {{ visa_formset.management_form|crispy }}
-          {% for form in visa_formset %}
-            <div class="visa-insurance-selections row justify-content-center">
-              {% for field in form %}
-                <div class="col"> {{ field|as_crispy_field }}</div>
-              {% endfor %}
-            </div>
-          {% endfor %}
-          <hr>
-          {{ insurance_formset.management_form|crispy }}
-          {% for form in insurance_formset %}
-            <div class="visa-insurance-selections row justify-content-center">
-              {% for field in form %}
-                <div class="col"> {{ field|as_crispy_field }}</div>
-              {% endfor %}
+                <div class="col"> {{ form.city|as_crispy_field }}</div>
+                <div class="col"> {{ form.sightseeing|as_crispy_field }}</div>
+                <div class="col"> {{ form.date|as_crispy_field }}</div>
+                {{ form.id }}
+                <div class="col"> {{ form.DELETE|as_crispy_field }}</div>
             </div>
           {% endfor %}
       </div>
@@ -132,11 +162,76 @@
     <br>
     <div class="row">
       <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h6>Visa Details</h6>
+            <hr>
+              {{ visa_formset.management_form|crispy }}
+              {% for form in visa_formset %}
+                <div class="visa-selections row justify-content-center">
+                    <div class="col"> {{ form.visa|as_crispy_field }}</div>
+                    {{ form.id }}
+                    <div class="col"> {{ form.DELETE|as_crispy_field }}</div>
+                </div>
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h6>Insurance Details</h6>
+            <hr>
+              {{ insurance_formset.management_form|crispy }}
+              {% for form in insurance_formset %}
+                <div class="insurance-selections row justify-content-center">
+                    <div class="col"> {{ form.insurance|as_crispy_field }}</div>
+                    {{ form.id }}
+                    <div class="col"> {{ form.DELETE|as_crispy_field }}</div>
+                </div>
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <div class="card-body">
+        <h6>Other Details</h6>
+        <hr>
+          {{ others_formset.management_form|crispy }}
+          {% for form in others_formset %}
+            <div class="others-selections row justify-content-center">
+                <div class="col">
+                  <div class="row">
+                    <div class="col"> {{ form.name|as_crispy_field }}</div>
+                    <div class="col"> {{ form.date|as_crispy_field }}</div>
+                    <div class="col"> {{ form.price|as_crispy_field }}</div>
+                    {{ form.id }}
+                    <div class="col"> {{ form.DELETE|as_crispy_field }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col"> {{ form.description|as_crispy_field }}</div>
+                  </div>
+                </div>
+            </div>
+            <hr>
+          {% endfor %}
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col">
         <br>
         <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
         <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -213,37 +308,22 @@
 <script src="{% static "js/salesapp_quote_form.js" %}"></script>
 
 <script>
-// THIS SCRIPT COPIES THE ORDER OF ELEMENTS IN ITINERARY AND COPIES IT TO ITINERARY FORMSET.
-$( function() {
-  $( ".sortable" ).sortable({
-    revert: true
-  });
-  $( ".draggable" ).draggable({
-    connectToSortable: ".sortable",
-    revert: "invalid"
-  });
-  $(".sortable").on("sortreceive", function(event,ui){
-    var i=0;
-    $(".sortable.included-elements").each(function(){
-      var x = $(this).sortable("toArray");
-      console.log(x);
-      $("input[name*="+i+"-ordering]").val(x);
-      i = i + 1;
-    });
-  });
-  $( ".draggable" ).disableSelection();
-});
+// FORM STYLING SCRIPTS
+$("textarea[name*=flight]").attr('rows',3)
+$("textarea[name*=others]").attr('rows',2)
+$(".hotel-selections label").css('font-size','0.9em')
 </script>
 
 
+
 <script>
+// THIS SCRIPT INITIALIZES THE LIST OF CITIES IN EMPTY ROWS OF HOTELS, TRANSFERS AND SIGHTSEEING AS PER THE CITIES SELECTED IN QUOTE DETAILS
   var city_ids = $("#id_cities").val()
   template = "<option value=''>---------</option>"
   for (var i = 0; i < city_ids.length; i++) {
     city = $("#id_cities option[value="+city_ids[i]+"]").text()
     template += `<option value='${city_ids[i]}'>${city}</option>`
   }
-
   $("select[id*='city']").each(function(index){
     if ( !($(this).val() > 0) ) {
       $(this).html(template);

@@ -69,6 +69,20 @@ class Quote(models.Model):
             age_list[i] = int(age_list[i])
         return age_list
 
+class QuoteFlightInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    airline = models.CharField(max_length=255,blank=True)
+    details = models.TextField(max_length=1000)
+    remarks = models.CharField(max_length=255,blank=True)
+    price = models.FloatField()
+
+class QuoteTransportInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    type = models.CharField(max_length=100,choices=[('TRAIN','Train'),('BUS','Bus'),('FERRY','Ferry'),('TAXI','Taxi')] )
+    date = models.DateField()
+    details = models.CharField(max_length=255)
+    price = models.FloatField()
+
 class QuoteHotelInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
     city = models.ForeignKey(City,on_delete=models.PROTECT)
@@ -105,3 +119,10 @@ class QuoteItineraryInfo(models.Model):
     date = models.DateField()
     ordering = models.CharField(max_length=255,blank=True)
     description = models.TextField(blank=True)
+
+class QuoteOthersInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(max_length=1000,blank=True)
+    date = models.DateField(blank=True,null=True)
+    price = models.FloatField(blank=True,null=True)
