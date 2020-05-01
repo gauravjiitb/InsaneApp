@@ -101,27 +101,6 @@ $(".sightseeing-selections select[id*='city']").change(function () {
   });
 });
 
-// THIS SCRIPT COPIES THE ORDER OF ELEMENTS IN ITINERARY AND COPIES IT TO ITINERARY FORMSET.
-$( function() {
-  $( ".sortable" ).sortable({
-    revert: true
-  });
-  $( ".draggable" ).draggable({
-    connectToSortable: ".sortable",
-    revert: "invalid"
-  });
-  $(".sortable").on("sortreceive", function(event,ui){
-    var i=0;
-    $(".sortable.included-elements").each(function(){
-      var x = $(this).sortable("toArray");
-      console.log(x);
-      $("input[name*="+i+"-ordering]").val(x);
-      i = i + 1;
-    });
-  });
-  $( ".draggable" ).disableSelection();
-});
-</script>
 
 
 // SCRIPT FOR VARYING DESTINATIONS SELECTION IN VISA/INSURANCE FIELDS BASED ON DESTINATIONS SELECTED IN QUOTE INFO

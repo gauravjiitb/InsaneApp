@@ -65,20 +65,57 @@ class Sightseeing(models.Model):
     description = models.TextField()
     adult_price = models.FloatField()
     child_price = models.FloatField()
+    adult_cutoff_age = models.PositiveSmallIntegerField(default=8)
+    child_cutoff_age = models.PositiveSmallIntegerField(default=2)
     duration = models.PositiveSmallIntegerField(blank=True,null=True) # in hours
+    tour_type = [('PRIVATE', 'With Private Transfers'),('SHARED', 'With Shared Transfers'),('NONE','Without Transfers')]
+    max_pax = models.PositiveSmallIntegerField(blank=True,null=True)
     remarks = models.CharField(max_length=255,blank=True)
 
     def __str__(self):
         return '{} | {}'.format(self.name, self.city)
+
+    def get_pricing(self,adults,children_ages):
+        children = 0
+        if children_ages:
+            children_age_list = list(children_ages.split(","))
+            for i in range(len(children_age_list)):
+                age = int(children_age_list[i])
+                if age >= self.adult_cutoff_age:
+                    adults += 1
+                elif age >= self.child_cutoff_age:
+                    children += 1
+        total_pax = adults + children
+        if not self.max_pax:
+            return (adults*self.adult_price + children*self.child_price)
+        else:
+            extra_pax = (total_pax % self.max_pax)
+            children = children - extra_pax
+            return (adults*self.adult_price + children*self.child_price + self.max_pax*self.adult_price)
 
 class Visa(models.Model):
     name = models.CharField(max_length=255,unique=True)
     destinations = models.ManyToManyField(Destination,related_name='Visas')
     adult_price = models.FloatField()
     child_price = models.FloatField()
+    adult_cutoff_age = models.PositiveSmallIntegerField(default=3)
+    child_cutoff_age = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return self.name
+
+    def get_pricing(self,adults,children_ages):
+        children = 0
+        if children_ages:
+            children_age_list = list(children_ages.split(","))
+            for i in range(len(children_age_list)):
+                age = int(children_age_list[i])
+                if age >= self.adult_cutoff_age:
+                    adults += 1
+                elif age >= self.child_cutoff_age:
+                    children += 1
+        return (adults*self.adult_price + children*self.child_price)
+
 
 class Insurance(models.Model):
     insurer = models.CharField(max_length=255)

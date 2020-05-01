@@ -11,3 +11,7 @@ def has_group(user, group_name):
 @register.filter(name='add_class')
 def add_class(value, arg):
     return value.as_widget(attrs={'class': arg})
+
+@register.filter(name='get_model_name')
+def get_model_name(value):
+  return value.__class__.__name__

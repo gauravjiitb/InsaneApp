@@ -61,6 +61,9 @@ class Quote(models.Model):
     cities = models.ManyToManyField(City)
     start_date = models.DateField()
     end_date = models.DateField()
+    price = models.FloatField(blank=True,null=True)
+    mark_up = models.FloatField(blank=True,null=True)
+    discount = models.FloatField(blank=True,null=True)
 
     @property
     def children_age_list(age_string):
@@ -74,14 +77,14 @@ class QuoteFlightInfo(models.Model):
     airline = models.CharField(max_length=255,blank=True)
     details = models.TextField(max_length=1000)
     remarks = models.CharField(max_length=255,blank=True)
-    price = models.FloatField()
+    price = models.FloatField(default=0)
 
 class QuoteTransportInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
-    type = models.CharField(max_length=100,choices=[('TRAIN','Train'),('BUS','Bus'),('FERRY','Ferry'),('TAXI','Taxi')] )
+    type = models.CharField(max_length=100,choices=[('TRAIN','Train'),('BUS','Bus'),('FERRY','Ferry'),('TAXI','Taxi'),('CAR','Self Drive Car Rental')] )
     date = models.DateField()
     details = models.CharField(max_length=255)
-    price = models.FloatField()
+    price = models.FloatField(default=0)
 
 class QuoteHotelInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
@@ -91,7 +94,7 @@ class QuoteHotelInfo(models.Model):
     checkout_date = models.DateField()
     room_type = models.CharField(max_length=100,blank=True)
     no_of_rooms = models.PositiveSmallIntegerField()
-    price = models.FloatField()
+    price = models.FloatField(default=0)
 
 class QuoteTransferInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
@@ -100,29 +103,46 @@ class QuoteTransferInfo(models.Model):
     date = models.DateField()
     quantity = models.PositiveSmallIntegerField()
 
+    @property
+    def price(self):
+        return (self.quantity * self.transfer.price)
+
 class QuoteSightseeingInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
     city = models.ForeignKey(City,on_delete=models.PROTECT)
     sightseeing = models.ForeignKey(Sightseeing,on_delete=models.PROTECT)
     date = models.DateField()
 
+    @property
+    def price(self):
+        return self.sightseeing.get_pricing(self.quote.adults,self.quote.children_age)
+
 class QuoteVisaInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
     visa = models.ForeignKey(Visa,on_delete=models.PROTECT)
+
+    @property
+    def price(self):
+        return self.visa.get_pricing(self.quote.adults,self.quote.children_age)
 
 class QuoteInsuranceInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
     insurance = models.ForeignKey(Insurance,on_delete=models.PROTECT,blank=True,null=True)
 
-class QuoteItineraryInfo(models.Model):
-    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
-    date = models.DateField()
-    ordering = models.CharField(max_length=255,blank=True)
-    description = models.TextField(blank=True)
+    @property
+    def price(self):
+        children = self.quote.children if self.quote.children else 0
+        return self.insurance.price * (self.quote.adults + children)
 
 class QuoteOthersInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=1000,blank=True)
     date = models.DateField(blank=True,null=True)
-    price = models.FloatField(blank=True,null=True)
+    price = models.FloatField(default=0)
+
+class QuoteItineraryInfo(models.Model):
+    quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    date = models.DateField()
+    ordering = models.CharField(max_length=255,blank=True)
+    description = models.TextField(blank=True)

@@ -32,6 +32,7 @@ def children_age_list(age_string):
 class QuoteForm(forms.ModelForm):
     start_date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
     end_date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
+    price = forms.FloatField(disabled=True,required=False)
     class Meta:
         model = Quote
         exclude = ()
@@ -99,8 +100,9 @@ class QuoteHotelInfoForm(forms.ModelForm):
     quote = forms.ModelChoiceField(queryset=Quote.objects.all(),disabled=True,required=False)
     checkin_date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
     checkout_date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
+    room_type = forms.CharField(initial='Standard Room',required=False)
+    no_of_rooms = forms.IntegerField(min_value=1,max_value=9,initial=1)
     price = forms.FloatField(min_value=0)
-    no_of_rooms = forms.IntegerField(min_value=1,max_value=9)
     class Meta:
         model = QuoteHotelInfo
         exclude = ()
@@ -142,6 +144,7 @@ QuoteHotelInfoFormSet = modelformset_factory(QuoteHotelInfo, form=QuoteHotelInfo
 
 class QuoteTransferInfoForm(forms.ModelForm):
     quote = forms.ModelChoiceField(queryset=Quote.objects.all(),disabled=True,required=False)
+    transfer = forms.ModelChoiceField(queryset=Transfer.objects.filter(price__gt=0))
     date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
     class Meta:
         model = QuoteTransferInfo
@@ -157,16 +160,17 @@ class QuoteTransferInfoForm(forms.ModelForm):
         self.empty_permitted = True
         if self.instance.pk:
             self.fields['city'].queryset = self.instance.quote.cities.all().order_by('destination')
-            self.fields['transfer'].queryset = Transfer.objects.filter(city=self.instance.city).order_by('name')
+            self.fields['transfer'].queryset = Transfer.objects.filter(city=self.instance.city,price__gt=0).order_by('name')
         if self.data:
             city_ids = self.data.getlist('cities')
             self.fields['city'].queryset = City.objects.filter(pk__in=city_ids).order_by('destination')
-            self.fields['transfer'].queryset = Transfer.objects.filter(city__id__in=city_ids).order_by('city')
+            self.fields['transfer'].queryset = Transfer.objects.filter(city__id__in=city_ids,price__gt=0).order_by('city')
 QuoteTransferInfoFormSet = modelformset_factory(QuoteTransferInfo, form=QuoteTransferInfoForm,extra=1,can_delete=True)
 
 
 class QuoteSightseeingInfoForm(forms.ModelForm):
     quote = forms.ModelChoiceField(queryset=Quote.objects.all(),disabled=True,required=False)
+    sightseeing = forms.ModelChoiceField(queryset=Sightseeing.objects.filter(adult_price__gt=0,child_price__gt=0))
     date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ))
     class Meta:
         model = QuoteSightseeingInfo
@@ -182,11 +186,11 @@ class QuoteSightseeingInfoForm(forms.ModelForm):
         self.empty_permitted = True
         if self.instance.pk:
             self.fields['city'].queryset = self.instance.quote.cities.all().order_by('destination')
-            self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city=self.instance.city).order_by('name')
+            self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city=self.instance.city,adult_price__gt=0,child_price__gt=0).order_by('name')
         if self.data:
             city_ids = self.data.getlist('cities')
             self.fields['city'].queryset = City.objects.filter(pk__in=city_ids).order_by('destination')
-            self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city__id__in=city_ids).order_by('city')
+            self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city__id__in=city_ids,adult_price__gt=0,child_price__gt=0).order_by('city')
 QuoteSightseeingInfoFormSet = modelformset_factory(QuoteSightseeingInfo, form=QuoteSightseeingInfoForm,extra=1,can_delete=True)
 
 

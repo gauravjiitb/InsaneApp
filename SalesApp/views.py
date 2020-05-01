@@ -97,12 +97,12 @@ def quote_load_hotels(request):
 
 def quote_load_transfers(request):
     city_id = request.GET.get('city_id')
-    transfers = Transfer.objects.filter(city__id=city_id).order_by('name')
+    transfers = Transfer.objects.filter(city__id=city_id,price__gt=0).order_by('name')
     return render(request, 'SalesApp/quote_form/transfers_dropdown_options.html', {'transfers': transfers})
 
 def quote_load_sightseeings(request):
     city_id = request.GET.get('city_id')
-    sightseeings = Sightseeing.objects.filter(city__id=city_id).order_by('name')
+    sightseeings = Sightseeing.objects.filter(city__id=city_id,adult_price__gt=0,child_price__gt=0).order_by('name')
     return render(request, 'SalesApp/quote_form/sightseeings_dropdown_options.html', {'sightseeings': sightseeings})
 
 
@@ -118,6 +118,7 @@ def quote_create_update(request,pk=None):
     def create_itinerary_lists(initial_quote,ordering_list=None):
         itinerary_objects_list = []
         itinerary_choices_objects_list = []
+        cities = initial_quote.cities.all()
         if not initial_quote.quoteitineraryinfo_set.all():
             duration = (initial_quote.end_date - initial_quote.start_date).days + 1
             date = initial_quote.start_date
@@ -125,10 +126,15 @@ def quote_create_update(request,pk=None):
                 QuoteItineraryInfo.objects.create(quote=initial_quote,date=date)
                 date = date + timedelta(days=1)
                 itinerary_objects_list.append([])
-            itinerary_choices_objects_list = list(initial_quote.quotetransferinfo_set.all()) + list(initial_quote.quotesightseeinginfo_set.all())
+            itinerary_choices_objects_list = (list(initial_quote.quotetransferinfo_set.all())
+                                                + list(initial_quote.quotesightseeinginfo_set.all())
+                                                + list(Transfer.objects.filter(city__in=cities,price=0))
+                                                + list(Sightseeing.objects.filter(city__in=cities,adult_price=0,child_price=0)))
         else:
             transfer_qs_remove_ids = []
             sightseeing_qs_remove_ids = []
+            free_transfer_qs_remove_ids = []
+            free_sightseeing_qs_remove_ids = []
             if ordering_list is None:
                 ordering_list = []
                 for object in initial_quote.quoteitineraryinfo_set.all():
@@ -138,25 +144,36 @@ def quote_create_update(request,pk=None):
                 object_list = []
                 for item in items:
                     if item:
-                        x = item.split('-')
-                        object_type = x[0]
-                        id = int(x[1])
+                        [object_type,id] = item.split('-')
                         if object_type == 'transfer':
                             try: # THIS WILL CHECK IF THE QUOTE-ITINERARY OBJECT HAS BEEN DELETED, OTHERWISE ADD IT TO DISPLAY LIST
                                 object_list.append(QuoteTransferInfo.objects.get(id=id))
                                 transfer_qs_remove_ids.append(id)
                             except:
                                 pass
-                        else:
+                        elif object_type == 'sightseeing':
                             try: # THIS WILL CHECK IF THE QUOTE-SIGHTSEEING OBJECT HAS BEEN DELETED, OTHERWISE ADD IT TO DISPLAY LIST
                                 object_list.append(QuoteSightseeingInfo.objects.get(id=id))
                                 sightseeing_qs_remove_ids.append(id)
                             except:
                                 pass
+                        elif object_type == 'free_transfer':
+                            tr = Transfer.objects.get(id=id)
+                            if tr.city in cities:
+                                object_list.append(tr)
+                                free_transfer_qs_remove_ids.append(id)
+                        elif object_type == 'free_sightseeing':
+                            st = Sightseeing.objects.get(id=id)
+                            if st.city in cities:
+                                object_list.append(st)
+                                free_sightseeing_qs_remove_ids.append(id)
                 itinerary_objects_list.append(object_list)
+
             transfer_choices_qs = QuoteTransferInfo.objects.filter(quote=initial_quote).exclude(id__in=transfer_qs_remove_ids)
             sightseeing_choices_qs = QuoteSightseeingInfo.objects.filter(quote=initial_quote).exclude(id__in=sightseeing_qs_remove_ids)
-            itinerary_choices_objects_list = list(transfer_choices_qs) + list(sightseeing_choices_qs)
+            free_transfer_choices_qs = Transfer.objects.filter(city__in=cities,price=0).exclude(id__in=free_transfer_qs_remove_ids)
+            free_sightseeing_choices_qs = Sightseeing.objects.filter(city__in=cities,adult_price=0,child_price=0).exclude(id__in=free_sightseeing_qs_remove_ids)
+            itinerary_choices_objects_list = list(transfer_choices_qs) + list(sightseeing_choices_qs) + list(free_transfer_choices_qs) + list(free_sightseeing_choices_qs)
         return itinerary_objects_list,itinerary_choices_objects_list
 
     if request.method == 'POST':
@@ -176,7 +193,8 @@ def quote_create_update(request,pk=None):
         insurance_formset = QuoteInsuranceInfoFormSet(request.POST,prefix='insurance',initial=initial)
         others_formset = QuoteOthersInfoFormSet(request.POST,prefix='others',initial=initial)
         itinerary_formset = QuoteItineraryInfoFormSet(request.POST,prefix='itinerary',initial=initial)
-        if itinerary_formset.is_valid(): # GETS THE ITINERARY ORDERING TO CONVERT THEM IN OBJECTS LIST FOR VIEW, IF THERE IS ERROR IN SAVING.
+
+        if initial_quote and itinerary_formset.is_valid(): # GETS THE ITINERARY ORDERING TO CONVERT THEM IN OBJECTS LIST FOR VIEW, IF THERE IS ERROR IN SAVING.
             ordering_list = []
             for form in itinerary_formset:
                 ordering_list.append(form['ordering'].value())
@@ -227,6 +245,19 @@ def quote_create_update(request,pk=None):
             # for itinerary in itineraries:
             #     itinerary.quote = quote
             itinerary_formset.save()
+
+            # CALCULATING PRICE
+            pricing_qs_list = (list(quote.quoteflightinfo_set.all()) + list(quote.quotetransportinfo_set.all()) + list(quote.quotehotelinfo_set.all())
+                                + list(quote.quotetransferinfo_set.all()) + list(quote.quotesightseeinginfo_set.all()) + list(quote.quotevisainfo_set.all())
+                                + list(quote.quoteinsuranceinfo_set.all()) + list(quote.quoteothersinfo_set.all()) )
+            quote.price = 0
+            for object in pricing_qs_list:
+                if object.price:
+                    quote.price += object.price
+            quote.price = quote.price + quote.mark_up if quote.mark_up else quote.price
+            quote.price = quote.price - quote.discount if quote.discount else quote.price
+            quote.save()
+
 
             if request.POST.get('redirect') == 'False':
                 return HttpResponseRedirect(reverse('SalesApp:quote_update', args=[quote.id]))
