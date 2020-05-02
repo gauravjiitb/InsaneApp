@@ -1,0 +1,252 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load my_extras %}
+
+{% block content %}
+
+<div class="container">
+<div class="jumbotron">
+
+  <form method="POST" id="quoteForm" data-hotels-url="{% url 'SalesApp:ajax_quote_load_hotels' %}"
+                                     data-transfers-url="{% url 'SalesApp:ajax_quote_load_transfers' %}"
+                                     data-sightseeings-url="{% url 'SalesApp:ajax_quote_load_sightseeings' %}" novalidate>
+  {% csrf_token %}
+
+  <div class="card">
+    <div class="card-body">
+      <h6>Flight Details</h6>
+      <hr>
+        {{ flight_formset.management_form|crispy }}
+        {% for form in flight_formset %}
+            <div class="flight-selections row justify-content-center">
+                <div class="col-2 align-self-center"> {{ form.airline|as_crispy_field }}</div>
+                <div class="col-2 align-self-center"> {{ form.price|as_crispy_field }}</div>
+                <div class="col">{{ form.details|as_crispy_field }}</div>
+                {{ form.id|as_crispy_field }}
+                <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+            </div>
+        {% endfor %}
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h6>Transport Details</h6>
+      <hr>
+        {{ transport_formset.management_form|crispy }}
+        {% for form in transport_formset %}
+          <div class="transport-selections row justify-content-center">
+              <div class="col"> {{ form.type|as_crispy_field }}</div>
+              <div class="col"> {{ form.date|as_crispy_field }}</div>
+              <div class="col-6"> {{ form.details|as_crispy_field }}</div>
+              <div class="col"> {{ form.price|as_crispy_field }}</div>
+              {{ form.id|as_crispy_field }}
+              <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+          </div>
+        {% endfor %}
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h6>Hotel Details</h6>
+      <hr>
+        {{ hotel_formset.management_form|crispy }}
+        {% for form in hotel_formset %}
+          <div class="hotel-selections row justify-content-center">
+              <div class="col"> {{ form.city|as_crispy_field }}</div>
+              <div class="col"> {{ form.hotel|as_crispy_field }}</div>
+              <div class="col"> {{ form.checkin_date|as_crispy_field }}</div>
+              <div class="col"> {{ form.checkout_date|as_crispy_field }}</div>
+              <div class="col"> {{ form.room_type|as_crispy_field }}</div>
+              <div class="col"> {{ form.no_of_rooms|as_crispy_field }}</div>
+              <div class="col"> {{ form.price|as_crispy_field }}</div>
+              {{ form.id|as_crispy_field }}
+              <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+          </div>
+        {% endfor %}
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h6>Transfer Details</h6>
+      <hr>
+        {{ transfer_formset.management_form|crispy }}
+        {% for form in transfer_formset %}
+          <div class="transfer-selections row justify-content-center">
+              <div class="col"> {{ form.city|as_crispy_field }}</div>
+              <div class="col"> {{ form.transfer|as_crispy_field }}</div>
+              <div class="col"> {{ form.date|as_crispy_field }}</div>
+              <div class="col"> {{ form.quantity|as_crispy_field }}</div>
+              {{ form.id|as_crispy_field }}
+              <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+          </div>
+        {% endfor %}
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h6>Sightseeing Details</h6>
+      <hr>
+        {{ sightseeing_formset.management_form|crispy }}
+        {% for form in sightseeing_formset %}
+          <div class="sightseeing-selections row justify-content-center">
+              <div class="col"> {{ form.city|as_crispy_field }}</div>
+              <div class="col"> {{ form.sightseeing|as_crispy_field }}</div>
+              <div class="col"> {{ form.date|as_crispy_field }}</div>
+              {{ form.id|as_crispy_field }}
+              <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+          </div>
+        {% endfor %}
+    </div>
+  </div>
+
+  <br>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h6>Visa Details</h6>
+          <hr>
+            {{ visa_formset.management_form|crispy }}
+            {% for form in visa_formset %}
+              <div class="visa-selections row justify-content-center">
+                  <div class="col"> {{ form.visa|as_crispy_field }}</div>
+                  {{ form.id|as_crispy_field }}
+                  <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+              </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h6>Insurance Details</h6>
+          <hr>
+            {{ insurance_formset.management_form|crispy }}
+            {% for form in insurance_formset %}
+              <div class="insurance-selections row justify-content-center">
+                  <div class="col"> {{ form.insurance|as_crispy_field }}</div>
+                  {{ form.id|as_crispy_field }}
+                  <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+              </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h6>Other Details</h6>
+      <hr>
+        {{ others_formset.management_form|crispy }}
+        {% for form in others_formset %}
+          <div class="others-selections row justify-content-center">
+              <div class="col">
+                <div class="row">
+                  <div class="col"> {{ form.type|as_crispy_field }}</div>
+                  <div class="col"> {{ form.city|as_crispy_field }}</div>
+                  <div class="col-3"> {{ form.name|as_crispy_field }}</div>
+                  <div class="col"> {{ form.date|as_crispy_field }}</div>
+                  <div class="col"> {{ form.price|as_crispy_field }}</div>
+                  {{ form.id|as_crispy_field }}
+                  <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
+                </div>
+                <div class="row">
+                  <div class="col"> {{ form.description|as_crispy_field }}</div>
+                </div>
+              </div>
+          </div>
+          <hr>
+        {% endfor %}
+    </div>
+  </div>
+
+  <br>
+
+  <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
+  </form>
+</div>
+</div>
+
+
+<script>
+// FORM STYLING SCRIPTS
+$("textarea[name*=flight]").attr('rows',2)
+$("textarea[name*=others]").attr('rows',2)
+$(".hotel-selections label").css('font-size','0.9em')
+</script>
+
+
+<script>
+// SCRIPT FOR VARYING HOTELS SELECTION BASED ON CITY SELECTED
+$(".hotel-selections select[id*='city']").change(function () {
+  id = this.id.replace('id_hotel-','').replace('-city','');
+  var url = $("#quoteForm").attr("data-hotels-url");
+  var city_id = $(this).val();
+  $.ajax({
+    url: url,
+    data: {
+      'city_id': city_id
+    },
+    success: function (data) {
+      var hotel_form_id = `id_hotel-${id}-hotel`
+      $(".hotel-selections select[id="+hotel_form_id+"]").html(data);
+    }
+  });
+});
+
+// SCRIPT FOR VARYING TRANSFERS SELECTION BASED ON CITY SELECTED
+$(".transfer-selections select[id*='city']").change(function () {
+  id = this.id.replace('id_transfer-','').replace('-city','');
+  var url = $("#quoteForm").attr("data-transfers-url");
+  var city_id = $(this).val();
+  $.ajax({
+    url: url,
+    data: {
+      'city_id': city_id
+    },
+    success: function (data) {
+      var transfer_form_id = `id_transfer-${id}-transfer`
+      $(".transfer-selections select[id="+transfer_form_id+"]").html(data);
+    }
+  });
+});
+
+// SCRIPT FOR VARYING SIGHTSEEINGS SELECTION BASED ON CITY SELECTED
+$(".sightseeing-selections select[id*='city']").change(function () {
+  id = this.id.replace('id_sightseeing-','').replace('-city','');
+  var url = $("#quoteForm").attr("data-sightseeings-url");
+  var city_id = $(this).val();
+  $.ajax({
+    url: url,
+    data: {
+      'city_id': city_id
+    },
+    success: function (data) {
+      var sightseeing_form_id = `id_sightseeing-${id}-sightseeing`
+      $(".sightseeing-selections select[id="+sightseeing_form_id+"]").html(data);
+    }
+  });
+});
+</script>
+
+
+{% endblock %}

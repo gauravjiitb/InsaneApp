@@ -29,6 +29,8 @@ urlpatterns = [
     path('',auth_views.LoginView.as_view(template_name='registration/login_staff.html'),name='login'),
     path('logout/',auth_views.LogoutView.as_view(),name='logout'),
 
+    path('tinymce/', include('tinymce.urls')),
+
     path('profiles/',include('ProfilesApp.urls',namespace='ProfilesApp')),
     path('marketing/',include('MarketingApp.urls',namespace='MarketingApp')),
     path('sales/',include('SalesApp.urls',namespace='SalesApp')),

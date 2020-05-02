@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'import_export',
     'phonenumber_field',
     'crispy_forms',
+    'tinymce',
+    'dynamic_formsets',
     'MarketingApp',
     'ProfilesApp',
     'SalesApp',
@@ -158,11 +160,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static'),]
-
 STATIC_ROOT = os.path.join(BASE_DIR,'static_root')
 
-LOGIN_URL = 'login'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
@@ -174,3 +177,5 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # PHONENUMBER_DB_FORMAT = 'NATIONAL'
 PHONENUMBER_DEFAULT_REGION = "IN"
+
+TINYMCE_INCLUDE_JQUERY = False

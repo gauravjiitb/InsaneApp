@@ -1,0 +1,33 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+  <br>
+  <div class="jumbotron">
+    <h2 align='center'>Please fill the details below.</h2>
+    <br>
+    <div class="row justify-content-center">
+      <div class="col-9">
+        <div class="card">
+          <div class="card-body">
+            <form method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button class="btn btn-primary btn-lg float-right px-5" type="submit">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// FORM STYLING SCRIPTS
+$("textarea").attr('rows',3)
+</script>
+
+{% endblock %}

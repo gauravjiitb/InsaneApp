@@ -1,0 +1,90 @@
+{% extends "base_staff.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h4>Quote Details</h4>
+    {{ quote.lead }} <br>
+    {{ quote.quote_inclusions }} <br>
+    {{ quote.destinations.all|join:", " }} <br>
+    {{ quote.cities.all|join:", " }} <br> <br>
+
+
+    <a href="{% url 'SalesApp:quote_update' pk=quote.pk %}"> <button class="btn btn-primary mx-3 px-5 float-right" type="submit" name="button">Edit Quote</button> </a>
+    {% comment %}
+      <a href="{% url 'SalesApp:quote_inclusions' pk=quote.pk %}"> <button class="btn btn-primary mx-3 px-5" type="submit" name="button">Edit Inclusions</button> </a>
+    {% endcomment %}
+
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-3">
+      {% if quote.quote_inclusions is False %}
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create Inclusions</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                  <form method="GET" action="{% url 'SalesApp:flex_inclusions_create' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="dropdown-item" type="submit">Fixed Format</button>
+                  </form>
+                  <form method="GET" action="{% url 'SalesApp:custom_inclusions' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="dropdown-item" type="submit">Customized Format</button>
+                  </form>
+                  <form method="GET" action="{% url 'SalesApp:flex_inclusions_create' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="dropdown-item" type="submit">Fully Flexible</button>
+                  </form>
+            </div>
+          </div>
+      {% elif quote.inclusions_format == 'FIXED' %}
+            <a href="#"> <button class="btn btn-primary mx-3 px-5" type="submit" name="button">Edit Inclusions</button> </a>
+      {% elif quote.inclusions_format == 'CUSTOM' %}
+            <form method="GET" action="{% url 'SalesApp:custom_inclusions' %}">
+              <input type="hidden" name="quote_id" value="{{quote.id}}">
+                <button class="btn btn-primary" type="submit">Edit Inclusions</button>
+            </form>
+      {% elif quote.inclusions_format == 'FLEXIBLE' %}
+            <form method="GET" action="{% url 'SalesApp:flex_inclusions_update' %}">
+              <input type="hidden" name="quote_id" value="{{quote.id}}">
+                <button class="btn btn-primary" type="submit">Edit Inclusions</button>
+            </form>
+      {% endif %}
+    </div>
+    <div class="col-3">
+      {% if quote.quote_itinerary is True %}
+            {% if quote.inclusions_format == 'FLEXIBLE'%}
+                  <form method="GET" action="{% url 'SalesApp:flex_itinerary_update' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="btn btn-primary" type="submit">Edit Itinerary</button>
+                  </form>
+            {% elif quote.inclusions_format == 'CUSTOM' %}
+                  <form method="GET" action="{% url 'SalesApp:custom_itinerary' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="btn btn-primary" type="submit">Edit Itinerary</button>
+                  </form>
+            {% endif %}
+      {% else %}
+            {% if quote.inclusions_format == 'FLEXIBLE'%}
+                  <form method="GET" action="{% url 'SalesApp:flex_itinerary_create' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="btn btn-primary" type="submit">Create Itinerary</button>
+                  </form>
+            {% elif quote.inclusions_format == 'CUSTOM' %}
+                  <form method="GET" action="{% url 'SalesApp:custom_itinerary' %}">
+                    <input type="hidden" name="quote_id" value="{{quote.id}}">
+                      <button class="btn btn-primary" type="submit">Create Itinerary</button>
+                  </form>
+            {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 from django.forms import modelformset_factory
 
@@ -12,6 +14,7 @@ from SalesApp.models import (Lead,Quote,QuoteFlightInfo,
                                         QuoteInsuranceInfo,
                                         QuoteItineraryInfo,
                                         QuoteOthersInfo)
+from SalesApp.models import FlexInclusions,FlexItinerary
 from ContentApp.models import Destination,City,Hotel,Transfer,Sightseeing,Visa,Insurance
 
 
@@ -35,7 +38,7 @@ class QuoteForm(forms.ModelForm):
     price = forms.FloatField(disabled=True,required=False)
     class Meta:
         model = Quote
-        exclude = ()
+        exclude = ('quote_active','inclusions_format','quote_inclusions','quote_itinerary','inclusions_updated','itinerary_updated','quote_valid')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -44,13 +47,14 @@ class QuoteForm(forms.ModelForm):
         children = cleaned_data.get("children")
         children_age = cleaned_data.get("children_age")
         age_list = children_age_list(children_age)
-
         if (children and not children_age) or (children_age and not children):
             self.add_error('children',"Age of Children specified wrongly.")
         if children != 0 and children_age and (age_list == [] or len(age_list) != children):
             self.add_error('children_age',"Age of Children specified wrongly.")
         if start_date and end_date and start_date > end_date:
             self.add_error('end_date',"Trip end date cannot be before start date.")
+        # if start_date and start_date < datetime.today():
+        #     self.add_error('start_date',"Trip start date cannot be in the past.")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,7 +69,53 @@ class QuoteForm(forms.ModelForm):
         elif self.instance.pk:
             pk = self.instance.pk
             destinations = self.instance.destinations.all()
-            self.fields['cities'].queryset = self.instance.cities.all().order_by('name')
+            self.fields['cities'].queryset = self.instance.cities.all().order_by('destination')
+
+    def save(self, commit=True):
+        if commit:
+            f = super(QuoteForm, self).save(commit=True)
+            f.inclusions_updated = False
+            f.itinerary_updated = False
+            f.quote_valid = False
+            f.save()
+        else:
+            f = super(QuoteForm, self).save(commit=False)
+        return f
+
+
+class FlexInclusionsForm(forms.ModelForm):
+    class Meta:
+        model = FlexInclusions
+        exclude = ()
+    def save(self, commit=True):
+        f = super(FlexInclusionsForm, self).save(commit=False)
+        if commit:
+            quote = f.quote
+            quote.quote_inclusions = True
+            quote.inclusions_updated = True
+            quote.inclusions_format = 'FLEXIBLE'
+            quote.itinerary_updated = False
+            quote.quote_valid = False
+            quote.save()
+            f.save()
+        return f
+
+class FlexItineraryForm(forms.ModelForm):
+    # content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+    class Meta:
+        model = FlexItinerary
+        exclude = ()
+    def save(self, commit=True):
+        f = super(FlexItineraryForm, self).save(commit=False)
+        if commit:
+            quote = f.quote
+            quote.quote_itinerary = True
+            if quote.inclusions_updated:
+                quote.itinerary_updated = True
+                quote.quote_valid = True
+            quote.save()
+            f.save()
+        return f
 
 class QuoteFlightInfoForm(forms.ModelForm):
     quote = forms.ModelChoiceField(queryset=Quote.objects.all(),disabled=True,required=False)
@@ -76,7 +126,7 @@ class QuoteFlightInfoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuoteFlightInfoForm, self).__init__(*args, **kwargs)
         self.empty_permitted = True
-QuoteFlightInfoFormSet = modelformset_factory(QuoteFlightInfo, form=QuoteFlightInfoForm, extra=1,can_delete=True)
+QuoteFlightInfoFormSet = modelformset_factory(QuoteFlightInfo, form=QuoteFlightInfoForm, extra=0,can_delete=True)
 
 class QuoteTransportInfoForm(forms.ModelForm):
     quote = forms.ModelChoiceField(queryset=Quote.objects.all(),disabled=True,required=False)
@@ -121,24 +171,20 @@ class QuoteHotelInfoForm(forms.ModelForm):
             self.add_error('checkin_date',"Check in date must be between trip start date and end date.")
         if checkout_date and quote and (checkout_date < quote.start_date or checkout_date > quote.end_date):
             self.add_error('checkout_date',"Check out date must be between trip start date and end date.")
-    # def save(self, commit=True):
-    #     f = super(QuoteHotelInfoForm, self).save(commit=False)
-    #     # do something here
-    #     if commit:
-    #         f.save()
-    #     return f
     def __init__(self, *args, **kwargs):
         super(QuoteHotelInfoForm, self).__init__(*args, **kwargs)
         self.empty_permitted = True
-        # self.fields['city'].queryset = City.objects.none()
-        # self.fields['hotel'].queryset = Hotel.objects.none()
         if self.instance.pk:
             self.fields['city'].queryset = self.instance.quote.cities.all().order_by('destination')
             self.fields['hotel'].queryset = Hotel.objects.filter(city=self.instance.city).order_by('name')
-        if self.data:
-            city_ids = self.data.getlist('cities')
-            self.fields['city'].queryset = City.objects.filter(pk__in=city_ids).order_by('destination')
-            self.fields['hotel'].queryset = Hotel.objects.filter(city__id__in=city_ids).order_by('city')
+        # elif self.data:
+        #     city_ids = self.data.getlist('cities')
+        #     self.fields['city'].queryset = City.objects.filter(pk__in=city_ids).order_by('destination')
+        #     self.fields['hotel'].queryset = Hotel.objects.filter(city__id__in=city_ids).order_by('city')
+        else:
+            quote = kwargs.get('initial', None).get('quote',None)
+            self.fields['city'].queryset = quote.cities.all().order_by('destination')
+            self.fields['hotel'].queryset = Hotel.objects.filter(city__in=quote.cities.all())
 QuoteHotelInfoFormSet = modelformset_factory(QuoteHotelInfo, form=QuoteHotelInfoForm,extra=1,can_delete=True)
 
 
@@ -153,18 +199,22 @@ class QuoteTransferInfoForm(forms.ModelForm):
         cleaned_data = super().clean()
         date = cleaned_data.get("date")
         quote = cleaned_data.get('quote')
+        city = cleaned_data.get("city")
+        transfer = cleaned_data.get('transfer')
         if quote and date and (date < quote.start_date or date > quote.end_date):
             self.add_error('date',"Date must be between trip start date and end date.")
+        if transfer and city and transfer.city != city:
+            self.add_error('transfer',"This transfer is not present in the selected city")
     def __init__(self, *args, **kwargs):
         super(QuoteTransferInfoForm, self).__init__(*args, **kwargs)
         self.empty_permitted = True
         if self.instance.pk:
             self.fields['city'].queryset = self.instance.quote.cities.all().order_by('destination')
-            self.fields['transfer'].queryset = Transfer.objects.filter(city=self.instance.city,price__gt=0).order_by('name')
-        if self.data:
-            city_ids = self.data.getlist('cities')
-            self.fields['city'].queryset = City.objects.filter(pk__in=city_ids).order_by('destination')
-            self.fields['transfer'].queryset = Transfer.objects.filter(city__id__in=city_ids,price__gt=0).order_by('city')
+            self.fields['transfer'].queryset = Transfer.objects.filter(city=self.instance.city,price__gt=0)
+        else:
+            quote = kwargs.get('initial', None).get('quote',None)
+            self.fields['city'].queryset = quote.cities.all().order_by('destination')
+            self.fields['transfer'].queryset = Transfer.objects.filter(city__in=quote.cities.all(),price__gt=0)
 QuoteTransferInfoFormSet = modelformset_factory(QuoteTransferInfo, form=QuoteTransferInfoForm,extra=1,can_delete=True)
 
 
@@ -179,18 +229,22 @@ class QuoteSightseeingInfoForm(forms.ModelForm):
         cleaned_data = super().clean()
         date = cleaned_data.get("date")
         quote = cleaned_data.get('quote')
+        city = cleaned_data.get("city")
+        sightseeing = cleaned_data.get('sightseeing')
         if quote and date and (date < quote.start_date or date > quote.end_date):
             self.add_error('date',"Date must be between trip start date and end date.")
+        if sightseeing and city and sightseeing.city != city:
+            self.add_error('sightseeing',"This sightseeing tour is not present in the selected city")
     def __init__(self, *args, **kwargs):
         super(QuoteSightseeingInfoForm, self).__init__(*args, **kwargs)
         self.empty_permitted = True
         if self.instance.pk:
             self.fields['city'].queryset = self.instance.quote.cities.all().order_by('destination')
             self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city=self.instance.city,adult_price__gt=0,child_price__gt=0).order_by('name')
-        if self.data:
-            city_ids = self.data.getlist('cities')
-            self.fields['city'].queryset = City.objects.filter(pk__in=city_ids).order_by('destination')
-            self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city__id__in=city_ids,adult_price__gt=0,child_price__gt=0).order_by('city')
+        else:
+            quote = kwargs.get('initial', None).get('quote',None)
+            self.fields['city'].queryset = quote.cities.all().order_by('destination')
+            self.fields['sightseeing'].queryset = Sightseeing.objects.filter(city__in=quote.cities.all(),adult_price__gt=0,child_price__gt=0).order_by('name')
 QuoteSightseeingInfoFormSet = modelformset_factory(QuoteSightseeingInfo, form=QuoteSightseeingInfoForm,extra=1,can_delete=True)
 
 
@@ -225,11 +279,26 @@ class QuoteOthersInfoForm(forms.ModelForm):
         cleaned_data = super().clean()
         date = cleaned_data.get("date")
         quote = cleaned_data.get('quote')
-        if quote and date and (date < quote.start_date or date > quote.end_date):
+        city = cleaned_data.get("city")
+        type = cleaned_data.get("type")
+        description = cleaned_data.get("description")
+        if date and (date < quote.start_date or date > quote.end_date):
             self.add_error('date',"Date must be between trip start date and end date.")
+        if (type == 'TRANSFER' or type == 'SIGHTSEEING'):
+            if not city:
+                self.add_error('city',"City must be specified for transfers or sightseeing.")
+            if not description:
+                self.add_error('description',"Description must be specified for transfers or sightseeing.")
+            if not date:
+                self.add_error('date',"Date must be specified for transfers or sightseeing.")
     def __init__(self, *args, **kwargs):
         super(QuoteOthersInfoForm, self).__init__(*args, **kwargs)
         self.empty_permitted = True
+        if self.instance.pk:
+            self.fields['city'].queryset = self.instance.quote.cities.all().order_by('destination')
+        else:
+            quote = kwargs.get('initial', None).get('quote',None)
+            self.fields['city'].queryset = quote.cities.all().order_by('destination')
 QuoteOthersInfoFormSet = modelformset_factory(QuoteOthersInfo, form=QuoteOthersInfoForm, extra=1,can_delete=True)
 
 class QuoteItineraryInfoForm(forms.ModelForm):

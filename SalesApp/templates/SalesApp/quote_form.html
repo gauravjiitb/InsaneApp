@@ -12,33 +12,29 @@
     <hr>
     <br>
 
-    <form method="POST" id="quoteForm" data-cities-url="{% url 'SalesApp:ajax_quote_load_cities' %}"
-                                       data-hotels-url="{% url 'SalesApp:ajax_quote_load_hotels' %}"
-                                       data-transfers-url="{% url 'SalesApp:ajax_quote_load_transfers' %}"
-                                       data-sightseeings-url="{% url 'SalesApp:ajax_quote_load_sightseeings' %}" novalidate>
+    <form method="POST" id="quoteForm" data-cities-url="{% url 'SalesApp:ajax_quote_load_cities' %}" novalidate>
     {% csrf_token %}
-    {% if view_error %}{{ view_error }}{% endif %}
-    {% if form.errors %}{{quote_form.non_field_errors}}{% endif %}
+    {% if form.errors %}{{form.non_field_errors}}{% endif %}
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            {{ quote_form.lead|as_crispy_field }}
-            {{ quote_form.title|as_crispy_field }}
-            {{ quote_form.starting_place|as_crispy_field }}
-            {{ quote_form.adults|as_crispy_field }}
-            {{ quote_form.children|as_crispy_field }}
-            {{ quote_form.children_age|as_crispy_field }}
+            {{ form.lead|as_crispy_field }}
+            {{ form.title|as_crispy_field }}
+            {{ form.starting_place|as_crispy_field }}
+            {{ form.adults|as_crispy_field }}
+            {{ form.children|as_crispy_field }}
+            {{ form.children_age|as_crispy_field }}
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            {{ quote_form.start_date|as_crispy_field }}
-            {{ quote_form.end_date|as_crispy_field }}
-            {{ quote_form.destinations|as_crispy_field }}
-            {{ quote_form.cities|as_crispy_field }}
+            {{ form.start_date|as_crispy_field }}
+            {{ form.end_date|as_crispy_field }}
+            {{ form.destinations|as_crispy_field }}
+            {{ form.cities|as_crispy_field }}
           </div>
         </div>
       </div>
@@ -47,337 +43,40 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-          <div class="col">{{ quote_form.mark_up|as_crispy_field }}</div>
-          <div class="col">{{ quote_form.discount|as_crispy_field }}</div>
-          <div class="col">{{ quote_form.price|as_crispy_field }}</div>
-          <div class="col align-self-center"><button class="btn btn-primary float-right" type="button" id="price-button">Get Price</button></div>
+          <div class="col">{{ form.mark_up|as_crispy_field }}</div>
+          <div class="col">{{ form.discount|as_crispy_field }}</div>
+          <div class="col">{{ form.price|as_crispy_field }}</div>
+          {% comment %}<div class="col align-self-center"><button class="btn btn-primary float-right" type="button" id="price-button">Get Price</button></div>{% endcomment %}
         </div>
       </div>
     </div>
     <br>
     <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
-    <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
-
+  </form>
   </div>
 </div>
 
-
-<div class="container">
-  <div class="jumbotron">
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Flight Details</h6>
-        <hr>
-          {{ flight_formset.management_form|crispy }}
-          {% for form in flight_formset %}
-            <div class="flight-selections row justify-content-center">
-                <div class="col">
-                  <div class="row">
-                    <div class="col"> {{ form.airline|as_crispy_field }}</div>
-                    <div class="col"> {{ form.price|as_crispy_field }}</div>
-                    {{ form.id }}
-                    <div class="col-2 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-                  </div>
-                  <div class="row">
-                    <div class="col">{{ form.details|as_crispy_field }}</div>
-                  </div>
-                </div>
-            </div>
-            <hr>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Transport Details</h6>
-        <hr>
-          {{ transport_formset.management_form|crispy }}
-          {% for form in transport_formset %}
-            <div class="transport-selections row justify-content-center">
-                <div class="col"> {{ form.type|as_crispy_field }}</div>
-                <div class="col"> {{ form.date|as_crispy_field }}</div>
-                <div class="col-6"> {{ form.details|as_crispy_field }}</div>
-                <div class="col"> {{ form.price|as_crispy_field }}</div>
-                {{ form.id }}
-                <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-            </div>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Hotel Details</h6>
-        <hr>
-          {{ hotel_formset.management_form|crispy }}
-          {% for form in hotel_formset %}
-            <div class="hotel-selections row justify-content-center">
-                <div class="col"> {{ form.city|as_crispy_field }}</div>
-                <div class="col"> {{ form.hotel|as_crispy_field }}</div>
-                <div class="col"> {{ form.checkin_date|as_crispy_field }}</div>
-                <div class="col"> {{ form.checkout_date|as_crispy_field }}</div>
-                <div class="col"> {{ form.room_type|as_crispy_field }}</div>
-                <div class="col"> {{ form.no_of_rooms|as_crispy_field }}</div>
-                <div class="col"> {{ form.price|as_crispy_field }}</div>
-                {{ form.id }}
-                <div class="col-1 align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-            </div>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Transfer Details</h6>
-        <hr>
-          {{ transfer_formset.management_form|crispy }}
-          {% for form in transfer_formset %}
-            <div class="transfer-selections row justify-content-center">
-                <div class="col"> {{ form.city|as_crispy_field }}</div>
-                <div class="col"> {{ form.transfer|as_crispy_field }}</div>
-                <div class="col"> {{ form.date|as_crispy_field }}</div>
-                <div class="col"> {{ form.quantity|as_crispy_field }}</div>
-                {{ form.id }}
-                <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-            </div>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Sightseeing Details</h6>
-        <hr>
-          {{ sightseeing_formset.management_form|crispy }}
-          {% for form in sightseeing_formset %}
-            <div class="sightseeing-selections row justify-content-center">
-                <div class="col"> {{ form.city|as_crispy_field }}</div>
-                <div class="col"> {{ form.sightseeing|as_crispy_field }}</div>
-                <div class="col"> {{ form.date|as_crispy_field }}</div>
-                {{ form.id }}
-                <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-            </div>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h6>Visa Details</h6>
-            <hr>
-              {{ visa_formset.management_form|crispy }}
-              {% for form in visa_formset %}
-                <div class="visa-selections row justify-content-center">
-                    <div class="col"> {{ form.visa|as_crispy_field }}</div>
-                    {{ form.id }}
-                    <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-                </div>
-              {% endfor %}
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h6>Insurance Details</h6>
-            <hr>
-              {{ insurance_formset.management_form|crispy }}
-              {% for form in insurance_formset %}
-                <div class="insurance-selections row justify-content-center">
-                    <div class="col"> {{ form.insurance|as_crispy_field }}</div>
-                    {{ form.id }}
-                    <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-                </div>
-              {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <br>
-
-    <div class="card">
-      <div class="card-body">
-        <h6>Other Details</h6>
-        <hr>
-          {{ others_formset.management_form|crispy }}
-          {% for form in others_formset %}
-            <div class="others-selections row justify-content-center">
-                <div class="col">
-                  <div class="row">
-                    <div class="col"> {{ form.name|as_crispy_field }}</div>
-                    <div class="col"> {{ form.date|as_crispy_field }}</div>
-                    <div class="col"> {{ form.price|as_crispy_field }}</div>
-                    {{ form.id }}
-                    <div class="col align-self-center"><br> {{ form.DELETE|as_crispy_field }}</div>
-                  </div>
-                  <div class="row">
-                    <div class="col"> {{ form.description|as_crispy_field }}</div>
-                  </div>
-                </div>
-            </div>
-            <hr>
-          {% endfor %}
-      </div>
-    </div>
-
-    <br>
-
-    <div class="row">
-      <div class="col">
-        <br>
-        <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
-        <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="container">
-  <div class="jumbotron">
-    <h6>Itinerary Details</h6>
-    <hr>
-    <small>To organize the itinerary, drag the items from right container to respective days in left container.
-      Itinerary can only be organized after you have selected the inclusions.</small>
-    <hr>
-
-    <div class="row">
-      <div class="col">
-        <h6>Day to day Itinerary</h6>
-        {% for object_list in itinerary_objects_list %}
-        <div class="card itinerary-card">
-          <p>Day {{forloop.counter}}</p>
-          <div class="sortable included-elements card-body">
-            {% for object in object_list %}
-              {% if object.transfer %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transfer-{{object.id}}">{{ object.transfer }}</p>
-              {% endif %}
-              {% if object.sightseeing %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="sightseeing-{{object.id}}">{{ object.sightseeing }}</p>
-              {% endif %}
-              {% if object|get_model_name == 'Transfer' %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="free_transfer-{{object.id}}">{{ object }}</p>
-              {% endif %}
-              {% if object|get_model_name == 'Sightseeing' %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="free_sightseeing-{{object.id}}">{{ object }}</p>
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <div class="col">
-        <h6>All Transfers and Sightseeing</h6>
-        <div class="card">
-          <div class=" sortable card-body">
-            {% for object in itinerary_choices_objects_list %}
-              {% if object.transfer %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transfer-{{object.id}}">{{ object.transfer }}</p>
-              {% endif %}
-              {% if object.sightseeing %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="sightseeing-{{object.id}}">{{ object.sightseeing }}</p>
-              {% endif %}
-              {% if object|get_model_name == 'Transfer' %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="free_transfer-{{object.id}}">{{ object }}</p>
-              {% endif %}
-              {% if object|get_model_name == 'Sightseeing' %}
-                <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="free_sightseeing-{{object.id}}">{{ object }}</p>
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="row">
-      {{ itinerary_formset.management_form|crispy }}
-      {% for form in itinerary_formset %}
-        <div class="itinerary-selections row justify-content-center d-none">
-          {% for field in form %}
-            <div class="col"> {{ field|as_crispy_field }}</div>
-          {% endfor %}
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <br>
-        <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
-        <button class="btn btn-primary btn-lg float-right" name="redirect" value="False" type="submit">Save and Continue Editing</button>
-        </form>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-<script src="{% static "js/salesapp_quote_form.js" %}"></script>
-
 <script>
-// FORM STYLING SCRIPTS
-$("textarea[name*=flight]").attr('rows',2)
-$("textarea[name*=others]").attr('rows',2)
-$(".hotel-selections label").css('font-size','0.9em')
-</script>
+// SCRIPT FOR RENDERING CHILDREN AGE FIELDS
+$('input[name*=children_age]').after("<small class='form-text text-muted'>Enter age of all children separated by commas as show above.</small>");;
+$('input[name*=children_age]').attr('placeholder','0,9,12')
 
+// SCRIPT FOR VARYING CITY SELECTION IN QUOTE INFO BASED ON DESTINATIONS SELECTED
+$("#id_destinations").change(function () {
+  var url = $("#quoteForm").attr("data-cities-url");  // get the url of the `quote_load_cities` view
+  var destination_ids = $(this).val();  // get the selected country ID from the HTML input
 
-<script>
-// THIS SCRIPT COPIES THE ORDER OF ELEMENTS IN ITINERARY AND COPIES IT TO ITINERARY FORMSET.
-$( function() {
-  $( ".sortable" ).sortable({
-    revert: true
-  });
-  $( ".draggable" ).draggable({
-    connectToSortable: ".sortable",
-    revert: "invalid"
-  });
-  $(".sortable").on("sortreceive", function(event,ui){
-    var i=0;
-    $(".sortable.included-elements").each(function(){
-      var x = $(this).sortable("toArray");
-      console.log(x);
-      $("input[name*="+i+"-ordering]").val(x);
-      i = i + 1;
-    });
-  });
-  $( ".draggable" ).disableSelection();
-});
-</script>
-
-
-<script>
-// THIS SCRIPT INITIALIZES THE LIST OF CITIES IN EMPTY ROWS OF HOTELS, TRANSFERS AND SIGHTSEEING AS PER THE CITIES SELECTED IN QUOTE DETAILS
-  var city_ids = $("#id_cities").val()
-  template = "<option value=''>---------</option>"
-  for (var i = 0; i < city_ids.length; i++) {
-    city = $("#id_cities option[value="+city_ids[i]+"]").text()
-    template += `<option value='${city_ids[i]}'>${city}</option>`
-  }
-  $("select[id*='city']").each(function(index){
-    if ( !($(this).val() > 0) ) {
-      $(this).html(template);
+  $.ajax({                       // initialize an AJAX request
+    url: url,                    // set the url of the request (= localhost:8000/sales/ajax/quote/load-cities/)
+    data: {
+      'destinations': destination_ids       // add the destination id to the GET parameters
+    },
+    success: function (data) {   // `data` is the return of the `load_cities` view function
+      $("#id_cities").html(data);  // replace the contents of the city input with the data that came from the server
     }
   });
+});
 </script>
-
 
 
 {% endblock %}

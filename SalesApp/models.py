@@ -3,6 +3,7 @@ from django.db.models import Model
 from django.urls import reverse
 
 from django_mysql.models import ListCharField
+from tinymce.models import HTMLField
 
 from MarketingApp.models import LeadSource
 from ProfilesApp.models import Customer,Staff
@@ -64,6 +65,17 @@ class Quote(models.Model):
     price = models.FloatField(blank=True,null=True)
     mark_up = models.FloatField(blank=True,null=True)
     discount = models.FloatField(blank=True,null=True)
+    quote_valid = models.BooleanField(default=False)
+    inclusions_updated = models.BooleanField(default=False)
+    itinerary_updated = models.BooleanField(default=False)
+    quote_inclusions = models.BooleanField(default=False)
+    quote_itinerary = models.BooleanField(default=False)
+    quote_active = models.BooleanField(default=True)
+    inclusions_format = models.CharField(max_length=100,choices=[('FIXED','Fixed Inlusions'),('CUSTOM','Customized Inclusions'),('FLEXIBLE','Full Flexible Format')], default='CUSTOM')
+
+
+    def get_absolute_url(self):
+        return reverse("SalesApp:quote_detail",kwargs={'pk':self.pk})
 
     @property
     def children_age_list(age_string):
@@ -71,6 +83,29 @@ class Quote(models.Model):
         for i in range(len(age_list)):
             age_list[i] = int(age_list[i])
         return age_list
+
+class FlexInclusions(models.Model):
+    quote = models.OneToOneField(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    flights = models.TextField(max_length=1000)
+    transport = models.TextField(max_length=1000)
+    hotels = models.TextField(max_length=1000)
+    transfers = models.TextField(max_length=1000)
+    sightseeing = models.TextField(max_length=1000)
+    visa = models.TextField(max_length=400)
+    insurance = models.TextField(max_length=400)
+    others = models.TextField(max_length=1000)
+    exclusions = models.TextField(max_length=1000)
+
+    def get_absolute_url(self):
+        return reverse("SalesApp:quote_detail",kwargs={'pk':self.quote.pk})
+
+class FlexItinerary(models.Model):
+    quote = models.OneToOneField(Quote,on_delete=models.CASCADE,blank=True,null=True)
+    content = models.TextField(max_length=1000)
+
+    def get_absolute_url(self):
+        return reverse("SalesApp:quote_detail",kwargs={'pk':self.quote.pk})
+
 
 class QuoteFlightInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
@@ -140,9 +175,18 @@ class QuoteOthersInfo(models.Model):
     description = models.TextField(max_length=1000,blank=True)
     date = models.DateField(blank=True,null=True)
     price = models.FloatField(default=0)
+    type = models.CharField(max_length=100,choices=[('TRANSFER','Transfer'),('SIGHTSEEING','Sightseeing'),('OTHER','Other')],default='OTHER')
+    city = models.ForeignKey(City,on_delete=models.PROTECT, blank=True,null=True)
+
+    def __str__(self):
+        if self.city:
+            return '{} | {}'.format(self.name, self.city)
+        else:
+            return self.name
+
 
 class QuoteItineraryInfo(models.Model):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE,blank=True,null=True)
-    date = models.DateField()
+    date = models.DateField(blank=True,null=True)
     ordering = models.CharField(max_length=255,blank=True)
     description = models.TextField(blank=True)
