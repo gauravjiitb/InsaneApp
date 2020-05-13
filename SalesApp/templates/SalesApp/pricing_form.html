@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+{% load static %}
+{% load widget_tweaks %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+
+    <form method="POST" novalidate>
+      {% csrf_token %}
+
+      <div class="modal-header">
+        <h3 class="modal-title">Pricing Details</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="container">
+
+                    {{ formset.management_form|crispy }}
+                    {% for form in formset %}
+                        {{ form|as_crispy_errors }}
+                        <div class="row">
+                            <div class="col-3 name-class">{{ form.name|as_crispy_field }}</div>
+                            <div class="col-2 pricing_type-class">{{ form.pricing_type|as_crispy_field }}</div>
+                            <div class="col-3 valid_from_date-class">{{ form.valid_from_date|as_crispy_field }}</div>
+                            <div class="col-3 valid_till_date-class">{{ form.valid_till_date|as_crispy_field }}</div>
+                            <div class="col-1 align-self-center DELETE-class">{{ form.DELETE|as_crispy_field }}</div>
+                            {{ form.id }}
+                            <div class="w-100"></div>
+                            <div class="col flat_adult_price-class">{{ form.flat_adult_price|as_crispy_field }}</div>
+                            <div class="col flat_child_price-class">{{ form.flat_child_price|as_crispy_field }}</div>
+                            <div class="col adult_cutoff_age-class">{{ form.adult_cutoff_age|as_crispy_field }}</div>
+                            <div class="col child_cutoff_age-class">{{ form.child_cutoff_age|as_crispy_field }}</div>
+                            <div class="col paxwise_max_pax_list-class">{{ form.paxwise_max_pax_list|as_crispy_field }}</div>
+                            <div class="col paxwise_price_list-class">{{ form.paxwise_price_list|as_crispy_field }}</div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="submit-btn btn btn-lg btn-primary px-5">Save</button>
+      </div>
+
+    </form>
+
+<script>
+
+// FORM STYLING SCRIPTS
+$("label").css('font-size','0.9em')
+$("input").css('font-size','0.9em')
+$("select").css('font-size','0.9em')
+// STYLING SCRIPT FOR RENDERING PAXWISE PRICING FIELDS
+$('input[name*=paxwise_max_pax]').after("<small class='form-text text-muted'>Enter number of maximum pax separated by commas.</small>");;
+$('input[name*=paxwise_max_pax]').attr('placeholder','2,6,8')
+$('input[name*=paxwise_price]').after("<small class='form-text text-muted'>Enter TOTAL PRICE FOR ALL PAX separated by commas.</small>");;
+$('input[name*=paxwise_price]').attr('placeholder','2500,3650,5359')
+
+// INITIALIZE
+$('select').each(function(){
+  if ($(this).val() == 'FLAT') {
+    $(this).parents('.row').find('.col').hide();
+    $(this).parents('.row').find('.flat_adult_price-class').show();
+    $(this).parents('.row').find('.flat_child_price-class').show();
+    $(this).parents('.row').find('.adult_cutoff_age-class').show();
+    $(this).parents('.row').find('.child_cutoff_age-class').show();
+  } else if ($(this).val() == 'PAXWISE') {
+    $(this).parents('.row').find('.col').hide();
+    $(this).parents('.row').find('.paxwise_max_pax_list-class').show();
+    $(this).parents('.row').find('.paxwise_price_list-class').show();
+  }
+});
+
+// THIS SCRIPT CHANGES THE DISPLAY BASED ON PRICING TYPE TYPE SELECTED.
+$('select').change(function(){
+  if ($(this).val() == 'FLAT') {
+    $(this).parents('.row').find('.col').hide();
+    $(this).parents('.row').find('.flat_adult_price-class').show();
+    $(this).parents('.row').find('.flat_child_price-class').show();
+    $(this).parents('.row').find('.adult_cutoff_age-class').show();
+    $(this).parents('.row').find('.child_cutoff_age-class').show();
+  } else if ($(this).val() == 'PAXWISE') {
+    $(this).parents('.row').find('.col').hide();
+    $(this).parents('.row').find('.paxwise_max_pax_list-class').show();
+    $(this).parents('.row').find('.paxwise_price_list-class').show();
+  }
+});
+
+
+</script>
+
+
+  </body>
+</html>

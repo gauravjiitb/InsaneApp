@@ -15,3 +15,7 @@ def add_class(value, arg):
 @register.filter(name='get_model_name')
 def get_model_name(value):
   return value.__class__.__name__
+
+@register.filter(name='csv_str_to_list')
+def csv_str_to_list(value):
+  return value.split(',')

@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
@@ -41,3 +42,10 @@ urlpatterns = [
     path('dashboard/',main_views.DashboardView.as_view(),name='dashboard'),
     path('403/',TemplateView.as_view(template_name='error_page_403.html'),name='error403'),
     ]
+
+
+# if settings.DEBUG:
+#     import debug_toolbar
+#     urlpatterns = [
+#         path('__debug__/',include(debug_toolbar.urls))
+#     ] + urlpatterns

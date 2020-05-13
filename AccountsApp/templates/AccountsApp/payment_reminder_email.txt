@@ -1,0 +1,12 @@
+Dear {{ name }},
+
+Greetings from Insane Travelers.
+
+This is a friendly reminder for the pending payment of {{ amount }} Rs for your
+upcoming trip, which is due on {{ date }}. You can make the payment using by
+NEFT / IMPS / RTGS / UPI. We request you to make the payment before {{ date }},
+to allow us enough time to finalize the booking vouchers, and avoid last minute
+rush.
+
+Thanks and regards,
+Team Insane Travelers

@@ -36,12 +36,8 @@
         <td>{{ lead.destinations.all|join:", " }}</td>
         <td>{{ lead.owner }}</td>
         {%if user|has_group:'Sales' %}
-        <td class="w-25 p-3">
+        <td class="">
           <a href="{% url 'SalesApp:lead_update' pk=lead.pk %}"><button type="button" class="btn btn-primary float-left btn-sm px-3 mx-3">Edit</button></a>
-          <form method="GET" action="{% url 'OperationsApp:booking_create' %}">
-            <input type="hidden" name="lead_id" value="{{lead.id}}">
-              <button class="btn btn-primary btn-sm float-right" type="submit">Create Booking</button>
-          </form>
         </td>
         {% endif %}
 

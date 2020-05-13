@@ -35,14 +35,14 @@
     {% for booking in object_list %}
       <tr>
         <th scope="row">{{ booking.booking_date }}</th>
-        <td><a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">{{ booking.lead.trip_id }}</a></td>
-        <td>{{ booking.lead.customer.user.name }}</td>
-        <td>{{ booking.lead.customer.user.phone }}</td>
+        <td><a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">{{ booking.quote.lead.trip_id }}</a></td>
+        <td>{{ booking.quote.lead.customer.user.name }}</td>
+        <td>{{ booking.quote.lead.customer.user.phone }}</td>
         <td>{{ booking.get_status_display }}</td>
         <td>{{ booking.owner }}</td>
-        <td>{{ booking.travel_date }}</td>
-        <td>{{ booking.booked_destinations.all|join:", " }}</td>
-        <td>{{ booking.lead.lead_source }}</td>
+        <td></td>
+        <td>{{ booking.quote.destinations.all|join:", " }}</td>
+        <td>{{ booking.quote.lead.lead_source }}</td>
         <td>{{ booking.projected_revenue }}</td>
         <td>{{ booking.sale_amount }}</td>
         {%if user|has_group:'Operations' %}

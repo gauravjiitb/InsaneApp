@@ -43,6 +43,7 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
+          <div class="col align-self-center">Auto-Calculated Pricing: <strong class="auto-price">{{ auto_price }}</strong> Rs</div>
           <div class="col">{{ form.mark_up|as_crispy_field }}</div>
           <div class="col">{{ form.discount|as_crispy_field }}</div>
           <div class="col">{{ form.price|as_crispy_field }}</div>
@@ -60,6 +61,22 @@
 // SCRIPT FOR RENDERING CHILDREN AGE FIELDS
 $('input[name*=children_age]').after("<small class='form-text text-muted'>Enter age of all children separated by commas as show above.</small>");;
 $('input[name*=children_age]').attr('placeholder','0,9,12')
+$('input[id*=price]').attr('readonly',true)
+
+
+// SCRIPT FOR PRICE CALCULATION
+var auto_price = parseInt($('.auto-price').text())
+var initial_price = auto_price + parseInt($('input[id*=mark_up]').val()) - parseInt($('input[id*=discount]').val());
+$('input[id*=price]').val(initial_price);
+
+$('input[id*=mark_up]').change(function(){
+  var price = auto_price  + parseInt($(this).val()) - parseInt($('input[id*=discount]').val());
+  $('input[id*=price]').val(price);
+});
+$('input[id*=discount]').change(function(){
+  var price = auto_price + parseInt($('input[id*=mark_up]').val()) - parseInt($(this).val());
+  $('input[id*=price]').val(price)
+});
 
 // SCRIPT FOR VARYING CITY SELECTION IN QUOTE INFO BASED ON DESTINATIONS SELECTED
 $("#id_destinations").change(function () {

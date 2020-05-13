@@ -10,8 +10,6 @@ class BookingFilter(django_filters.FilterSet):
     class Meta:
         model = Booking
         fields = {
-            'booked_destinations':['icontains'],
-            'lead':[],
             'status':[],
         }
     @property

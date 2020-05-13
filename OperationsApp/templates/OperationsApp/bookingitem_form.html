@@ -1,0 +1,38 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <form method="POST">
+      {% csrf_token %}
+      <h6>Booking Inclusion Details</h6>
+      <hr>
+        {{ formset.management_form|crispy }}
+        {% for form in formset %}
+            <div class="row justify-content-center">
+                <div class="col">{{ form.date|as_crispy_field }}</div>
+                <div class="col-5">{{ form.detail|as_crispy_field }}</div>
+                <div class="col">{{ form.vendor|as_crispy_field }}</div>
+                <div class="col">{{ form.cost|as_crispy_field }}</div>
+                <div class="col">{{ form.time_limit|as_crispy_field }}</div>
+                <div class="col">{{ form.conf_status|as_crispy_field }}</div>
+                <div class="">{{ form.id }}</div>
+                <div class="">{{ form.booking }}</div>
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5"  type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+// STYLING SCRIPTS
+$("textarea").attr('rows',2)
+</script>
+
+{% endblock %}

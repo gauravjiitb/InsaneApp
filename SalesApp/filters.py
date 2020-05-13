@@ -1,6 +1,6 @@
 import django_filters
 from ProfilesApp.models import Customer
-from SalesApp.models import Lead
+from SalesApp.models import Lead, Package, Quote
 
 
 class LeadFilter(django_filters.FilterSet):
@@ -14,3 +14,18 @@ class LeadFilter(django_filters.FilterSet):
             'customer':[],
             'lead_status':[],
         }
+
+class PackageFilter(django_filters.FilterSet):
+    class Meta:
+        model = Package
+        fields = {
+            'title':['icontains'],
+            'type':[],
+            }
+
+class QuoteFilter(django_filters.FilterSet):
+    class Meta:
+        model = Quote
+        fields = {
+            'title':['icontains'],
+            }

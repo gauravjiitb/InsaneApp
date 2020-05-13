@@ -37,11 +37,8 @@ class CustomerDetailView(LoginRequiredMixin,DetailView):
         pk = self.kwargs.get('pk')
         customer = Customer.objects.get(id=pk)
         context['leads'] = Lead.objects.filter(customer = customer)
-        context['bookings'] = Booking.objects.filter(lead__customer = customer)
+        context['bookings'] = Booking.objects.filter(quote__lead__customer = customer)
         return context
-# 	def get_queryset(self):
-# 		if self.request.user.is_authenticated:
-# 			return Customer.objects.filter(user=self.request.user)
 
 
 class CustomerCreateView(LoginRequiredMixin,FormView):

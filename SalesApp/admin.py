@@ -1,7 +1,5 @@
 from django.contrib import admin
-from SalesApp.models import (Lead,Quote,QuoteHotelInfo, QuoteTransferInfo,QuoteSightseeingInfo,QuoteVisaInfo,
-                                QuoteInsuranceInfo,QuoteItineraryInfo,FlexInclusions,FlexItinerary,QuoteFlightInfo,QuoteTransportInfo,
-                                QuoteOthersInfo)
+from SalesApp.models import Lead,Quote,Package,Inclusion, FlexInclusions,FlexItinerary, HotelGroup
 
 # Create your custom admin views here.
 
@@ -15,13 +13,8 @@ class QuoteAdmin(admin.ModelAdmin):
 
 admin.site.register(Lead,LeadAdmin)
 admin.site.register(Quote,QuoteAdmin)
-admin.site.register(QuoteFlightInfo)
-admin.site.register(QuoteTransportInfo)
-admin.site.register(QuoteHotelInfo)
-admin.site.register(QuoteTransferInfo)
-admin.site.register(QuoteSightseeingInfo)
-admin.site.register(QuoteVisaInfo)
-admin.site.register(QuoteInsuranceInfo)
-admin.site.register(QuoteItineraryInfo)
+admin.site.register(Package)
+admin.site.register(Inclusion)
+admin.site.register(HotelGroup)
 admin.site.register(FlexInclusions)
 admin.site.register(FlexItinerary)

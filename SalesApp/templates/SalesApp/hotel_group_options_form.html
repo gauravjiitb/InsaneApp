@@ -1,0 +1,34 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <form method="POST">
+      {% csrf_token %}
+      <h6>Hotel Details</h6>
+      <hr>
+        {{ formset.management_form|crispy }}
+        {% for form in formset %}
+            <div class="row justify-content-center">
+              {% for field in form %}
+                <div class="col">{{ field|as_crispy_field }}</div>
+              {% endfor %}
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5"  type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  $('div[id*=item_type]').each(function(){
+    $(this).hide();
+  });
+</script>
+
+
+{% endblock %}

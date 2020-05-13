@@ -1,13 +1,15 @@
 from django.contrib import admin
 
 from SalesApp.models import Customer,Lead
-from OperationsApp.models import Booking
+from OperationsApp.models import Booking, BookingItem, Traveler
 
 # Create your custom admin views here.
 
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('id','lead','status','sale_amount')
+    list_display = ('id','quote','status','sale_amount')
 
 # Register your models here.
 
 admin.site.register(Booking,BookingAdmin)
+admin.site.register(BookingItem)
+admin.site.register(Traveler)

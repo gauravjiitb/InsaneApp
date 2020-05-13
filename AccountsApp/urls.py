@@ -17,4 +17,6 @@ urlpatterns = [
     # path('proforma-invoice/list/',views.ProformaInvoiceListView.as_view(),name='proforma_invoice_list'),
     path('booking/<int:pk>/proforma-invoice/',views.create_proforma_invoice,name='proforma_invoice_create_update'),
     path('trip-payments/',views.TripPaymentListView.as_view(),name='trippayment_list'),
+
+    path('ajax/pending-payment/<int:pk>/send-reminder/',views.customer_payment_reminder,name='customer_payment_reminder'),
 ]

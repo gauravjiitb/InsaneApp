@@ -51,12 +51,16 @@
             <td class="float-right"> <a href="{% url 'SalesApp:lead_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
           <tr>
-            <td><a href="{% url 'SalesApp:lead_list' %}">Quotes</a></td>
-            <td class="float-right"> <a href="#"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
+            <td> <a href="{% url 'SalesApp:quote_list' %}">Quotes</a> </td>
+            <td class="float-right"> <a href="{% url 'SalesApp:quote_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
             <td class="float-right"> <a href="{% url 'SalesApp:quote_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
           </tr>
+          <tr>
+            <td><a href="{% url 'SalesApp:package_list' %}">Packages</a></td>
+            <td class="float-right"> <a href="{% url 'SalesApp:package_list' %}"><button class='btn btn-outline-success px-5' type="submit" name="button">View</button></a> </td>
+            <td class="float-right"> <a href="{% url 'SalesApp:package_create' %}"><button class='btn btn-outline-success' type="submit" name="button">Add New</button></a> </td>
+          </tr>
         </tbody>
-
       </table>
 
       <br>
@@ -129,7 +133,7 @@
     </div>
   </div>
 
-{# <script type="text/javascript">
+<script>
 $(document).ready(function() {
 
     $(".quote-create").modalForm({
@@ -137,7 +141,7 @@ $(document).ready(function() {
     });
 
 });
-</script> #}
+</script>
 
 -->
 

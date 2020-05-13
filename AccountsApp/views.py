@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import TemplateView,ListView,DetailView,CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy,reverse
@@ -7,13 +7,15 @@ from django_filters.views import FilterView
 from django.views.generic.edit import ModelFormMixin
 from django.forms import formset_factory
 from django.contrib.auth.decorators import user_passes_test
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 from SalesApp.models import Customer,Lead
 from OperationsApp.models import Booking
 from AccountsApp.models import Account,TransactionHead,Transaction,TripPayment,PendingPayment
 from AccountsApp.filters import TransactionFilter,TripPaymentFilter
 from AccountsApp.forms import TransactionForm,PendingPaymentFormSet,TransactionUploadFormSet,TripPaymentFormSet,TripPaymentForm
-from InsaneDjangoApp import helper_functions as helpers
+from InsaneDjangoApp import utils as helpers
 
 #######################################################
 # HELPER FUNCTIONS
@@ -59,6 +61,22 @@ class TransactionUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         return context
     def test_func(self):
         return self.request.user.groups.filter(name='Accounts').exists()
+
+
+def customer_payment_reminder(request,pk):
+    payment = PendingPayment.objects.get(id=pk)
+    from_email = 'hello@lykke.travel'
+    to = payment.booking.quote.lead.customer.user.email
+    subject = 'Trip ID' + payment.booking.quote.lead.trip_id + 'Payment Reminder'
+
+    context = { 'name': payment.booking.quote.lead.customer.user.name, 'date':payment.date, 'amount':payment.amount }
+    text_content = render_to_string('AccountsApp/payment_reminder_email.txt',context)
+
+    x = send_mail(subject,text_content,from_email,[to])
+    email_sent = True if x > 0 else False
+    data = {'email_sent':email_sent}
+    return JsonResponse(data)
+
 
 
 

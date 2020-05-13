@@ -1,0 +1,25 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn-primary btn-lg float-right mx-5 px-5" type="submit">Save</button>
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+  $('div[id*=package]').hide()
+</script>
+
+{% endblock %}

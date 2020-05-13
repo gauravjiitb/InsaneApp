@@ -38,16 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_mysql',
+    # 'debug_toolbar',
+    'extra_views',
     'bootstrap4',
     'bootstrap_pagination',
-    'extra_views',
     'widget_tweaks',
     'bootstrap_modal_forms',
-    'import_export',
     'phonenumber_field',
     'crispy_forms',
     'tinymce',
-    'dynamic_formsets',
     'MarketingApp',
     'ProfilesApp',
     'SalesApp',
@@ -65,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'InsaneDjangoApp.urls'
@@ -155,8 +155,21 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Email Server details
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'gaurav.jain@lykke.travel'
+EMAIL_HOST_PASSWORD = 'Gjlt.1987'
+
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+INTERNAL_IPS = ['127.0.0.1',]
+
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static'),]

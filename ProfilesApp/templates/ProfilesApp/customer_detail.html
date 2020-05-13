@@ -35,7 +35,7 @@
           <ul>
             {% for booking in bookings %}
             <a href="{% url 'OperationsApp:booking_detail' pk=booking.pk %}">
-              <li>{{ booking.lead.trip_id }} ({{booking.booked_destinations.all|join:", "}})</li></a>
+              <li>{{booking}} ({{booking.quote.destinations.all|join:", "}})</li></a>
             {% endfor %}
           </ul>
         </td>

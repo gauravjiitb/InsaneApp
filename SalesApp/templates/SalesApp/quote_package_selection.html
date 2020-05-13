@@ -1,0 +1,77 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">{{ form.order1|as_crispy_field }}</div>
+            <div class="col">{{ form.package1|as_crispy_field }}</div>
+            <div class="col">{{ form.hotel_group1|as_crispy_field }}</div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">{{ form.order2|as_crispy_field }}</div>
+            <div class="col">{{ form.package2|as_crispy_field }}</div>
+            <div class="col">{{ form.hotel_group2|as_crispy_field }}</div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">{{ form.order3|as_crispy_field }}</div>
+            <div class="col">{{ form.package3|as_crispy_field }}</div>
+            <div class="col">{{ form.hotel_group3|as_crispy_field }}</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-lg float-right px-5" type="submit">Save</button>
+    </form>
+
+  </div>
+</div>
+
+<script>
+
+// STYLING SCRIPTS
+$('label[for*=order1]').text('Order');
+$('label[for*=order2]').text('Order');
+$('label[for*=order3]').text('Order');
+
+
+
+  // SCRIPT FOR VARYING HOTEL GROUP SELECTION BASED ON PACKAGE SELECTED
+  $("select[id*=package]").change(function () {
+    var package_id = $(this).val();
+    var row_id = $(this).parents('.row').find('input[id*=order]').val();
+    var url = "{% url 'SalesApp:ajax_package_load_hotelgroups' %}";
+    $.ajax({
+      url: url,
+      data: {
+        'package_id': package_id
+      },
+      success: function (data) {
+        $('#id_hotel_group'+row_id).html(data)
+      }
+    });
+  });
+
+
+</script>
+
+{% endblock %}

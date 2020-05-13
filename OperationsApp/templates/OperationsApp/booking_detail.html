@@ -1,84 +1,79 @@
 {% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% load my_extras %}
+
+
 {% block content %}
 
-<div class="container w-50 p-3">
+
+<div class="container">
   <div class="jumbotron">
-    <h3 align="center">Booking Overview</h3>
-    <br>
-    <table class="table table-bordered table-hover table-secondary">
-      <tr>
-        <th class="bg-secondary th-customer-detail w-25 p-3">Booking Date</th>
-        <td>{{ booking.booking_date }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Trip ID</th>
-        <td>{{ booking.lead.trip_id }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Name</th>
-        <td>{{ booking.lead.customer.user.name }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Email Address</th>
-        <td>{{ booking.lead.customer.user.email }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Phone Number</th>
-        <td>{{ booking.lead.customer.user.phone }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Status</th>
-        <td>{{ booking.get_status_display }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Destinations</th>
-        <td>{{ booking.booked_destinations.all|join:", " }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Lead Source</th>
-        <td>{{ booking.lead.lead_source }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Lead Source ID</th>
-        <td>{{ booking.lead.id_at_lead_source }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Projected Revenue</th>
-        <td>{{ booking.projected_revenue }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Sale Amount</th>
-        <td>{{ booking.sale_amount }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">TCS</th>
-        <td>{{ booking.tcs_amount }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">GST</th>
-        <td>{{ booking.gst_amount }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Commission Paid</th>
-        <td>{{ booking.commission_paid }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Actual Revenue</th>
-        <td>{{ booking.actual_revenue }}</td>
-      </tr>
-      <tr>
-        <th class="bg-secondary th-customer-detail">Booking Owner</th>
-        <td>{{ booking.owner }}</td>
-      </tr>
-    </table>
+
+    <h4 align="center">Booking Overview</h4>
+
+    <div class="card m-1">
+      <div class="card-body mx-3">
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">Trip ID:</span> {{ booking.quote.lead.trip_id }}</div>
+          <div class="col display-field-box"><span class="labels">Quote:</span> <a href="{% url 'SalesApp:quote_detail' pk=booking.quote.id %}">{{ booking.quote.title }}</a> </div>
+          <div class="col display-field-box"><span class="labels">Status:</span> {{ booking.get_status_display }}</div>
+        </div>
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">Name:</span> {{ booking.quote.lead.customer.user.name }}</div>
+          <div class="col display-field-box"><span class="labels">Email Address:</span> {{ booking.quote.lead.customer.user.email }}</div>
+          <div class="col display-field-box"><span class="labels">Phone Number:</span> {{ booking.quote.lead.customer.user.phone }}</div>
+        </div>
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">Booking Date:</span> {{ booking.booking_date }}</div>
+          <div class="col display-field-box"><span class="labels">Booking Owner:</span> {{ booking.owner }}</div>
+          <div class="col display-field-box"><span class="labels">Lead Soucre:</span> {{ booking.quote.lead.lead_source }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card m-1">
+      <div class="card-body mx-3">
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">Trip Dates:</span>{{ booking.quote.start_date|date:"d M" }} - {{ booking.quote.end_date|date:"d M" }} </div>
+          <div class="col display-field-box"><span class="labels">Pax:</span>{{ booking.quote.adults }} Adults
+            {% if booking.quote.children %}, {{ booking.quote.children }} Children ({{ booking.quote.children_age }}) {% endif %} </div>
+          <div class="col display-field-box"><span class="labels">Starting Place:</span> {{ booking.quote.starting_place }} </div>
+        </div>
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">Destinations:</span> {{ booking.quote.destinations.all|join:", " }}</div>
+          <div class="col display-field-box"><span class="labels">Cities:</span> {{ booking.quote.cities.all|join:", " }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card m-1">
+      <div class="card-body mx-3">
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">Sale Amount:</span> {{ booking.sale_amount }}</div>
+          <div class="col display-field-box"><span class="labels">Projected Revenue:</span> {{ booking.projected_revenue }}</div>
+          <div class="col display-field-box"><span class="labels">Actual Revenue:</span> {{ booking.actual_revenue }}</div>
+        </div>
+        <div class="row">
+          <div class="col display-field-box"><span class="labels">TCS:</span> {{ booking.tcs_amount }}</div>
+          <div class="col display-field-box"><span class="labels">GST:</span> {{ booking.gst_amount }}</div>
+          <div class="col display-field-box"><span class="labels">Commission Paid:</span> {{ booking.commission_paid }}</div>
+        </div>
+      </div>
+    </div>
+
     <a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}"><button class="btn btn-warning btn-lg float-right mx-3 px-5" type="submit">Edit </button></a>
+
   </div>
 </div>
 
+
+
+
 <div class="container w-75 p-3">
   <div class="jumbotron">
-    <h3 align="center">Payment Details</h3>
-    <br>
+    <h4 align="center">Payment Details</h4>
     <table class="table table-bordered table-hover table-secondary">
 
       <thead>
@@ -87,6 +82,7 @@
         <th class="bg-secondary th-customer-detail">Cr / Dr</th>
         <th class="bg-secondary th-customer-detail">Description</th>
         <th class="bg-secondary th-customer-detail">Transaction Details</th>
+        <th class="bg-secondary th-customer-detail">Actions</th>
       </thead>
       {% for payment in payments %}
       <tr>
@@ -94,7 +90,8 @@
         <td>{{ payment.amount }}</td>
         <td>{{ payment.get_inout_type_display }}</td>
         <td>{{ payment.description }}</td>
-        <td class="w-50 p-3"> {% if payment.transaction %} <a href="{% url 'AccountsApp:transaction_detail' pk=payment.transaction.pk %}">{{ payment.transaction.transaction_ref }}</a> {% else %} Pending {% endif %} </td>
+        <td class=""> {% if payment.transaction %} <a href="{% url 'AccountsApp:transaction_detail' pk=payment.transaction.pk %}">{{ payment.transaction.transaction_ref }}</a> {% else %} Pending {% endif %} </td>
+        <td>{% if not payment.transaction %}<button class="btn btn-primary payment-reminder-btn" type="button" data-payment-url="{% url 'AccountsApp:customer_payment_reminder' pk=payment.pk %}" name="button">Send Reminder</button>{% endif %} </td>
       </tr>
       {% endfor %}
 
@@ -103,6 +100,249 @@
     <br>
   </div>
 </div>
+
+
+
+<div class="container">
+  <div class="jumbotron">
+      <h4 align="center">Inclusions</h4><br>
+
+    <table class="table table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="inclusion-table-categories">Flights</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'FLIGHT' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">
+                    {{ object.detail|linebreaks }}
+                    <span class="item-action-badge">Send Booking Email</span>
+                  </div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Hotels</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'HOTEL' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail }}</div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Transport</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'TRANSPORT' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Transfers</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'TRANSFER' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Sightseeing</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'SIGHTSEEING' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Visa</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'VISA' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail }} <span class="item-action-badge">Send Visa Email</span></div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Insurance</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'INSURANCE' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail }} <span class="item-action-badge">Book Insurance</span></div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Others</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'OTHER' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="inclusion-table-categories">Exclusions</th>
+        <td>
+          {% for object in booking_items  %}
+            {% if object.item_type == 'EXCLUSION' %}
+              <div class="card">
+                <div class="row">
+                  <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
+                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col booking-item-class">{{object.vendor}}</div>
+                  <div class="col booking-item-class">{{object.cost}}</div>
+                  <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
+                  <div class="col booking-item-class"><span class="badge badge-pill conf-badge">{{object.conf_status}}</span></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    </table>
+    <a href="{% url 'OperationsApp:booking_item_update' pk=booking.id %}"><button class="btn btn-primary float-right" type="submit" name="button">Update Booking Items</button> </a>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+    <h4 align="center">Itinerary</h4><br>
+      <table class="table table-bordered table-hover table-secondary">
+          {% for day in itinerary %}
+            <tr>
+              <th class="bg-secondary th-customer-detail w-25 p-3">Day {{ forloop.counter }}</th>
+              <td>
+                {{day|linebreaks}}
+              </td>
+            </tr>
+          {% endfor %}
+      </table>
+  </div>
+</div>
+
+
+
+<script>
+// STYLING SCRIPTS
+  $('.labels').addClass('text-secondary')
+  $('.display-field-box').addClass('shadow p-2 m-1 bg-light rounded text-center')
+  $('.booking-item-class').css('font-size','0.8em').addClass('border-right m-1')
+  $('.item-action-badge').addClass('badge badge-info p-1 float-right')
+  $('span.conf-badge').each(function(){
+    if ($(this).text() == 'CONFIRMED'){
+      $(this).addClass('badge-success')
+    } else if ($(this).text() == 'PENDING'){
+      $(this).addClass('badge-danger')
+    } else if ($(this).text() == 'BLOCKED'){
+      $(this).addClass('badge-warning')
+    }
+  });
+
+
+
+  $('.inclusion-table-categories').addClass('bg-secondary text-white align-middle')
+
+  $('.payment-reminder-btn').click(function(){
+    var url = $(this).data('payment-url');
+    $.ajax({
+      url: url,
+      success: function(data) {
+        if (data.email_sent == true) {
+          alert('Email Sent.');
+        } else {
+          alert('Email Sending Failed.');
+        }
+      }
+    });
+  });
+
+</script>
 
 
 {% endblock %}
