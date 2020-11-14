@@ -1,12 +1,26 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
 
 from phonenumber_field.modelfields import PhoneNumberField
 ########################################################################
 
 # Create your models here.
+
+class Traveler(models.Model):
+    title = models.CharField(max_length=10,choices=[('MR','Mr'),('MS','Ms'),('DR','Dr')],blank=True)
+    firstname = models.CharField(max_length=100,blank=True,null=True)
+    lastname = models.CharField(max_length=100,blank=True,null=True)
+    gender = models.CharField(max_length=50,choices=[('MALE','Male'),('FEMALE','Female')])
+    dob = models.DateField(blank=True,null=True)
+    passport_num = models.CharField(max_length=50,blank=True,null=True)
+    place_of_issue = models.CharField(max_length=50,blank=True,null=True)
+    expiry_date = models.DateField(blank=True,null=True)
+    issue_date = models.DateField(blank=True,null=True)
+
+    def __str__(self):
+        return '{} {}'.format(self.firstname, self.lastname)
+
 
 class User(AbstractUser):
     name = models.CharField(max_length=100)
@@ -16,17 +30,15 @@ class User(AbstractUser):
     def __str__(self):
         return self.name
 
-        
 
 class Customer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    travelers = models.ManyToManyField(Traveler)
 
     def get_absolute_url(self):
         return reverse("ProfilesApp:customer_detail",kwargs={'pk':self.pk})
-
     def __str__(self):
         return self.user.name
-
 
 
 class Staff(models.Model):
@@ -35,6 +47,10 @@ class Staff(models.Model):
 
     def __str__(self):
         return self.user.name
+
+
+
+
 
 
 

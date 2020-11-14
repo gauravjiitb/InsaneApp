@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ContentApp.models import Destination,City,Hotel,Transport,Transfer,Sightseeing,Vendor,Visa,Insurance, Pricing
+from ContentApp.models import Destination,City,Hotel,Transport,Transfer,Sightseeing,Vendor,Visa,Insurance, Pricing, Theme, Tag
 
 class DestinationAdmin(admin.ModelAdmin):
     list_display = ('id','name')
@@ -28,3 +28,5 @@ admin.site.register(Vendor,VendorAdmin)
 admin.site.register(Visa)
 admin.site.register(Insurance)
 admin.site.register(Pricing)
+admin.site.register(Theme)
+admin.site.register(Tag)

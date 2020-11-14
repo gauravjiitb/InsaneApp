@@ -64,6 +64,7 @@
     </div>
 
     <a href="{% url 'OperationsApp:booking_update' pk=booking.pk %}"><button class="btn btn-warning btn-lg float-right mx-3 px-5" type="submit">Edit </button></a>
+    <a href="{% url 'OperationsApp:add_travelers' pk=booking.pk %}"><button class="btn btn-warning btn-lg float-right" type="submit">Add / Edit Travelers </button></a>
 
   </div>
 </div>
@@ -112,12 +113,12 @@
         <th class="inclusion-table-categories">Flights</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'FLIGHT' %}
+            {% if object.item_type == '0_FLIGHT' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
                   <div class="col-5 booking-item-class">
-                    {{ object.detail|linebreaks }}
+                    {{ object.display_handle|linebreaks }}
                     <span class="item-action-badge">Send Booking Email</span>
                   </div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
@@ -134,11 +135,11 @@
         <th class="inclusion-table-categories">Hotels</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'HOTEL' %}
+            {% if object.item_type == '1_HOTEL' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail }}</div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle }}</div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -153,11 +154,11 @@
         <th class="inclusion-table-categories">Transport</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'TRANSPORT' %}
+            {% if object.item_type == '2_TRANSPORT' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle|linebreaks }}</div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -172,11 +173,11 @@
         <th class="inclusion-table-categories">Transfers</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'TRANSFER' %}
+            {% if object.item_type == '3_TRANSFER' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle|linebreaks }}</div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -191,11 +192,11 @@
         <th class="inclusion-table-categories">Sightseeing</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'SIGHTSEEING' %}
+            {% if object.item_type == '4_SIGHTSEEING' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle|linebreaks }}</div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -210,11 +211,11 @@
         <th class="inclusion-table-categories">Visa</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'VISA' %}
+            {% if object.item_type == '5_VISA' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail }} <span class="item-action-badge">Send Visa Email</span></div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle }} <span class="item-action-badge">Send Visa Email</span></div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -229,11 +230,11 @@
         <th class="inclusion-table-categories">Insurance</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'INSURANCE' %}
+            {% if object.item_type == '6_INSURANCE' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail }} <span class="item-action-badge">Book Insurance</span></div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle }} <span class="item-action-badge">Book Insurance</span></div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -248,11 +249,11 @@
         <th class="inclusion-table-categories">Others</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'OTHER' %}
+            {% if object.item_type == '7_OTHER' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle|linebreaks }}</div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -267,11 +268,11 @@
         <th class="inclusion-table-categories">Exclusions</th>
         <td>
           {% for object in booking_items  %}
-            {% if object.item_type == 'EXCLUSION' %}
+            {% if object.item_type == '8_EXCLUSION' %}
               <div class="card">
                 <div class="row">
                   <div class="col booking-item-class">{{object.date|date:"d M"}}</div>
-                  <div class="col-5 booking-item-class">{{ object.detail|linebreaks }}</div>
+                  <div class="col-5 booking-item-class">{{ object.display_handle|linebreaks }}</div>
                   <div class="col booking-item-class">{{object.vendor}}</div>
                   <div class="col booking-item-class">{{object.cost}}</div>
                   <div class="col booking-item-class">{{object.time_limit|date:"d M"}}</div>
@@ -298,7 +299,9 @@
             <tr>
               <th class="bg-secondary th-customer-detail w-25 p-3">Day {{ forloop.counter }}</th>
               <td>
-                {{day|linebreaks}}
+                {% for item in day  %}
+                  <p>{{item|linebreaks}}</p>
+                {% endfor %}
               </td>
             </tr>
           {% endfor %}

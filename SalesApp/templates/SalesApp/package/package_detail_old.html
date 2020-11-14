@@ -1,0 +1,311 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load my_extras %}
+
+
+{% block content %}
+
+<div class="container">
+  <br>
+  <div class="jumbotron">
+      <h4 align="center">Package Overview</h4><br>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Package Type</th>
+        <td>{{ package.get_type_display }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Title</th>
+        <td>{{ package.title }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Starting Place</th>
+        <td>{{ package.starting_place }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Duration</th>
+        <td>{{ package.duration }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Destinations</th>
+        <td>{{ package.destinations.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Cities</th>
+        <td>{{ package.cities.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Minimum Pax</th>
+        <td>{{ package.min_pax }}</td>
+      </tr>
+      {% if package.type == 'FIXED' %}
+        <tr>
+          <th class="bg-secondary th-customer-detail">Package Validity</th>
+          <td>from {{ package.validity_start_date }} to {{ package.validity_end_date }}</td>
+        </tr>
+      {% endif %}
+      <tr>
+        <th class="bg-secondary th-customer-detail">Inclusions Updated</th>
+        <td>{{ package.inclusions_updated }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Itinerary Updated</th>
+        <td>{{ package.itinerary_updated }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Itinerary</th>
+        <td>{{ package.itinerary }}</td>
+      </tr>
+  </table>
+
+    <br>
+    <a href="{% url 'SalesApp:package_update' pk=package.pk %}"><button class="btn btn-warning btn-lg float-right mx-3 px-5" type="submit">Edit </button></a>
+
+    <div class="row">
+      <div class="col"><a href="{% url 'SalesApp:hotel_option_create' pk=package.id %}"><button class="btn btn-primary" type="submit">Add Hotel Option</button></a> </div>
+      <div class="col"><a href="{% url 'SalesApp:package_inclusions' pk=package.id %}"><button class="btn btn-primary" type="submit">Add / Edit Inclusions</button></a></div>
+      <div class="col"><a href="{% url 'SalesApp:package_itinerary' pk=package.id %}"><button class="btn btn-primary" type="submit">Create / Edit Itinerary</button></a></div>
+      <div class="col">{% if package.type == 'FIXED' %}<button class="btn btn-primary package-pricing-btn" type="submit">Update Pricing</button>{% endif %} </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% if package.type == 'FIXED' %}
+<div class="container">
+  <div class="jumbotron">
+      <h4 align="center">Pricing</h4><br>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Package Pricing</th>
+        <td>
+            {% for pricing in pricing_list %}
+
+              {% if pricing.pricing_type == 'FLAT' %}
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-3">{{ pricing.name }}</div>
+                        <div class="col">
+                          <div class="row">
+                            <div class="col border-left border-right">Adult Price : {{ pricing.flat_adult_price }} Rs</div>
+                            <div class="col border-left border-right">Child Price : {{ pricing.flat_child_price }} Rs</div>
+                          </div><hr>
+                          <div class="row">
+                            <div class="col border-left border-right">Adult Age Limit : {{ pricing.adult_cutoff_age }} Years</div>
+                            <div class="col border-left border-right">Child Age Limit : {{ pricing.child_cutoff_age }} Years</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <small class="px-5">Note: Prices are per pax.</small>
+                  </div>
+              {% endif %}
+
+              {% if pricing.pricing_type == 'PAXWISE' %}
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-3">{% if pricing.name %}{{ pricing.name }}{% else %}Option {{forloop.counter}} {% endif %}</div>
+                        <div class="col">
+                          <div class="row">
+                            {% for pax in pricing.paxwise_max_pax_list|csv_str_to_list %}
+                            <div class="col border-left border-right">{{pax}} Pax</div>
+                            {% endfor %}
+                          </div><hr>
+                          <div class="row">
+                            {% for price in pricing.paxwise_price_list|csv_str_to_list %}
+                            <div class="col border-left border-right">{{price}} Rs</div>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <small class="px-5">Note: Prices are total for all pax.</small>
+                  </div>
+              {% endif %}
+
+            {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Optionals Pricing</th>
+        <td>
+          {% for object in optionals_list %}
+            {% if object.optional %} <p>{{ object }} ---<button class="btn btn-primary optionals-pricing-btn btn-sm" type="button"
+                                                        data-optionals-url="{% url 'SalesApp:package_optionals_pricing' pk=object.id %}">View / Update Pricing</button> </p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+  </table>
+  </div>
+</div>
+
+{% endif %}
+
+
+
+<div class="container">
+  <div class="jumbotron">
+    {% for group in hotel_groups %}
+    <h5 align="center">{{group.0.hotel_group.name}}</h5>
+    <table class="table table-light table-striped table-hover table-bordered" >
+      <thead class="thead-dark" >
+        <th>City</th>
+        <th>Nights</th>
+        <th>Hotel</th>
+        <th>Room Type</th>
+        <th>Action</th>
+      </thead>
+        {% for inclusion in group %}
+        <tr>
+          <td>{{inclusion.hotel.city}}</td>
+          <td>{{inclusion.nights}}</td>
+          <td>{{ inclusion.hotel.name }}</td>
+          <td>{{ inclusion.room_type }}</td>
+          <td> <a href="{% url 'SalesApp:package_hotels_create' pk=inclusion.hotel_group.id %}"> <button type="submit" class="btn btn-primary btn-sm">Edit</button> </a> </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+      <h4 align="center">Other Inclusions</h4><br>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Flights</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object.item_type == 'FLIGHT' %} <p>{{ object.details|linebreaks }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Transport</th>
+        <td>
+        {% for object in inclusions %}
+          {% if object|get_model_name == 'Transport' %}<p>{{ object }}</p> {% endif %}
+        {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Transfers</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object|get_model_name == 'Transfer' %} <p>{{ object }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Sightseeing</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object|get_model_name == 'Sightseeing' %} <p>{{ object }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Visa</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object|get_model_name == 'Visa' %} <p>{{ object }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Insurance</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object|get_model_name == 'Insurance' %} <p>{{ object }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Others</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object.item_type == 'OTHER' %} <p>{{ object.name }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Exclusions</th>
+        <td>
+          {% for object in inclusions %}
+            {% if object.item_type == 'EXCLUSION' %} <p>{{ object.details|linebreaks }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+  </table>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+
+    <h4 align="center">Itinerary</h4><br>
+      <table class="table table-bordered table-hover table-secondary">
+          {% for day in itinerary_objects_list %}
+            <tr>
+              <th class="bg-secondary th-customer-detail w-25 p-3">Day {{ forloop.counter }}</th>
+              <td>
+              {% for object in day %}
+                {% if object.item_type == 'OTHER' %}
+                  {{ object.details|linebreaks }}
+                {% else %}
+                  <p>{{ object.description|linebreaks }}</p>
+                {% endif %}
+              {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+      </table>
+
+
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal for Pricing Form & HotelGroup Creation -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+  $(document).ready(function() {
+
+      $(".package-pricing-btn").modalForm({
+          formURL: "{% url 'SalesApp:package_pricing' pk=package.id %}"
+      });
+
+      $(".optionals-pricing-btn").each(function () {
+        $(this).modalForm({formURL: $(this).data('optionals-url')});
+      });
+
+  });
+  </script>
+
+
+
+{% endblock %}

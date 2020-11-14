@@ -15,7 +15,7 @@
         {% for form in formset %}
             <div class="row justify-content-center">
                 <div class="col">{{ form.date|as_crispy_field }}</div>
-                <div class="col-5">{{ form.detail|as_crispy_field }}</div>
+                <div class="col-5">{{ form.display_handle|as_crispy_field }}</div>
                 <div class="col">{{ form.vendor|as_crispy_field }}</div>
                 <div class="col">{{ form.cost|as_crispy_field }}</div>
                 <div class="col">{{ form.time_limit|as_crispy_field }}</div>

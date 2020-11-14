@@ -12,4 +12,6 @@ urlpatterns = [
     path('customer/<int:pk>/',views.CustomerDetailView.as_view(),name='customer_detail'),
     path('customer/create/',views.CustomerCreateView.as_view(),name='customer_create'),
     path('customer/<int:pk>/update',views.CustomerUpdateView.as_view(),name='customer_update'),
+    path('traveler/create/',views.TravelerCreateView.as_view(),name='traveler_create'),
+    path('traveler/<int:pk>/update',views.TravelerUpdateView.as_view(),name='traveler_update'),
 ]

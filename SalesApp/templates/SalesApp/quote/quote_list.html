@@ -1,0 +1,49 @@
+{% extends 'base_staff.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load bootstrap_pagination %}
+{% load my_extras %}
+
+{% block content %}
+<div class="container">
+  <div class="jumbotron">
+    <br>
+
+    <form class="form-group" method="GET">
+        {{filter.form}}
+        <input class="btn btn-primary float-right" type="submit" value='Search' />
+    </form>
+
+    <table class="table table-bordered table-hover table-secondary">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Title</th>
+        <th scope="col">Destinations</th>
+        <th scope="col">Cities</th>
+        {% if user|has_group:'Sales' %}<th scope="col">Actions</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for quote in object_list %}
+        <tr>
+          <th scope="row">{{ quote.id }}</th>
+          <td><a href="{% url 'SalesApp:quote_detail' pk=quote.pk %}">{{ quote.title }}</a></td>
+          <td>{{ quote.destinations.all|join:", " }}</td>
+          <td>{{ quote.cities.all|join:", " }}</td>
+          {%if user|has_group:'Sales' %}
+          <td class="">
+            <a href="{% url 'SalesApp:quote_detail' pk=quote.pk %}"><button type="button" class="btn btn-primary float-left btn-sm px-3 mx-3">View</button></a>
+          </td>
+          {% endif %}
+
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% bootstrap_paginate page_obj range=5 %}
+
+  </div>
+</div>
+{% endblock %}

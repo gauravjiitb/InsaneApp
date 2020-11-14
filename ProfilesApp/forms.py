@@ -4,9 +4,18 @@ from django.db import transaction
 
 from phonenumber_field.formfields import PhoneNumberField
 
-from ProfilesApp.models import Customer
+from ProfilesApp.models import Customer, Traveler
 
 ###############################################################
+
+class TravelerForm(forms.ModelForm):
+    dob = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ),required=False)
+    expiry_date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ),required=False)
+    issue_date = forms.DateField(widget=forms.DateInput(format='%d/%m/%y'),input_formats=('%d/%m/%y', ),required=False)
+    class Meta:
+        model = Traveler
+        fields = ('title','firstname','lastname','gender','dob','passport_num','place_of_issue','expiry_date','issue_date')
+
 
 class CustomerCreateForm(forms.Form):
     name = forms.CharField(max_length=100,required=True)
@@ -18,7 +27,7 @@ class CustomerCreateForm(forms.Form):
         cleaned_data = super().clean()
         email = cleaned_data.get("email")
         username = email
-        # username = email if email else phone (Will be useful if we give option of using phone also unique username in future)
+        # username = email if email else phone (Will be useful if we give option of using phone also as unique username in future)
         # if not email and not phone:
         #     raise forms.ValidationError("Either Email or Phone Number is required")
         if User.objects.filter(username=username).exists():

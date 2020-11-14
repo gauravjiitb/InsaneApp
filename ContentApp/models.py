@@ -97,13 +97,13 @@ class Visa(models.Model):
         return self.name
 
 class Insurance(models.Model):
-    insurer = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     duration = models.PositiveSmallIntegerField() # in Days
-    destinations = models.ManyToManyField(Destination)
     coverage = models.PositiveIntegerField() # in USD
 
     def __str__(self):
-        return '{} | {} USD | {} Days'.format(self.insurer, self.coverage, self.duration)
+        return '{} | {} USD | {} Days'.format(self.name, self.coverage, self.duration)
+
 
 class Vendor(models.Model):
     name = models.CharField(max_length=255,unique=True)
@@ -140,40 +140,14 @@ class Pricing(models.Model):
     objects = models.Manager()
     pricemanager = PricingManager()
 
-    # def get_pricing(self,adults,children_ages):
-    #     # CALCULATE THE TOTAL NUMBER OF CHILDREN
-    #     children = 0
-    #     if children_ages:
-    #         children_age_list = children_ages.split(',')
-    #         for i in range(len(children_age_list)):
-    #             age = int(children_age_list[i])
-    #             if age >= self.adult_cutoff_age:
-    #                 adults += 1
-    #             elif age >= self.child_cutoff_age:
-    #                 children += 1
-    #     total_pax = adults + children
-    #
-    #     # if self.season_pricing_bool:
-    #     #     season_list = json.loads(self.season_cutoff_dates)
-    #     #     season_list = list(map(lambda x: datetime.datetime.strptime(x,'%Y-%m-%d'),season_list)) # CONVERTING STRINGS TO DATES
-    #     #     total_seasons = len(season_list) + 1
-    #     #     y = [x for x in season_list if x > date]
-    #     #     season_index = total_seasons - len(y)
-    #     #     adult_price_factor = json.loads(self.season_adult_price_factors)[season_index]
-    #     #     child_price_factor = json.loads(self.season_child_price_factors)[season_index]
-    #
-    #     if self.pricing_type == 'FLAT':
-    #         price = (adults*flat_adult_price + children*flat_child_price)
-    #     else:
-    #         max_pax_list = self.paxwise_max_pax_list.split(',')
-    #         price_list = self.paxwise_price_list.split(',')
-    #         y = [x for x in max_pax_list if x > total_pax] # FIND ALL THE VEHICLES WITH CAPACITY MORE THAN GIVEN PAX
-    #         if not y: # CHECK IF THE GIVEN PAX ARE MORE THAN THE BIGGEST VEHICLE SIZE, THEN DIVIDE THEM IN VEHICLES
-    #             extra_pax = (total_pax % Y[-1])
-    #             price = extra_pax*price_list[0] + (total_pax - extra_pax)*price_list[-1]
-    #         else:
-    #             a = y[0] # FIND THE MINIMUM VEHICLE WITH CAPACITY MORE THAN GIVEN PAX
-    #             i = price_list.index(a)
-    #             price = total_pax*price_list[i]
-    #     return price
-    #
+class Theme(models.Model):
+    name = models.CharField(max_length=100,blank=True)
+    image = models.ImageField(upload_to='theme_images/',blank=True)
+    def __str__(self):
+        return self.name
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100,blank=True)
+    image = models.ImageField(upload_to='tag_images/',blank=True)
+    def __str__(self):
+        return self.name

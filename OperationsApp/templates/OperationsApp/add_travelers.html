@@ -1,0 +1,41 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="">
+  <div class="jumbotron">
+    <form method="POST">
+      {% csrf_token %}
+      <h6>Travelers Details</h6>
+      <hr>
+        {{ formset.management_form|crispy }}
+        {% for form in formset %}
+            <div class="row justify-content-center">
+                <div class="col-1">{{ form.title|as_crispy_field }}</div>
+                <div class="col">{{ form.firstname|as_crispy_field }}</div>
+                <div class="col">{{ form.lastname|as_crispy_field }}</div>
+                <div class="col-1">{{ form.gender|as_crispy_field }}</div>
+                <div class="col">{{ form.dob|as_crispy_field }}</div>
+                <div class="col">{{ form.passport_num|as_crispy_field }}</div>
+                <div class="col">{{ form.place_of_issue|as_crispy_field }}</div>
+                <div class="col">{{ form.expiry_date|as_crispy_field }}</div>
+                <div class="col">{{ form.issue_date|as_crispy_field }}</div>
+                <div class="">{{ form.id }}</div>
+                <div class="col-1">{{ form.DELETE|as_crispy_field }}</div>
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5"  type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+// STYLING SCRIPTS
+$("textarea").attr('rows',2)
+</script>
+
+{% endblock %}

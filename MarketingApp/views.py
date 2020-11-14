@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import ListView,DetailView,CreateView,UpdateView
+from django.contrib.auth.models import Permission
 
 from django_filters.views import FilterView
 
@@ -39,7 +40,7 @@ class InquiryUpdateView(LoginRequiredMixin, InquiryUpdatePermissionMixin, Update
 
 class InquiryDetailView(LoginRequiredMixin, InquiryDetailPermissionMixin, DetailView):
     model = Inquiry
-
+    
 
 class InquiryListView(LoginRequiredMixin, StaffRequiredMixin, FilterView):
     model = Inquiry

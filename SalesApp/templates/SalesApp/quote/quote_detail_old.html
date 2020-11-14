@@ -1,0 +1,305 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% load my_extras %}
+
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h4 align="center">Overview</h4>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Lead</th>
+        <td>{{ quote.lead }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Title</th>
+        <td>{{ quote.title }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Starting Place</th>
+        <td>{{ quote.starting_place }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Pax</th>
+        <td>{{ quote.adults }} Adults{% if quote.children %}, {{ quote.children }} Children ({{ quote.children_age }}) {% endif %} </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Dates</th>
+        <td>{{ quote.start_date }} - {{ quote.end_date }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Destinations</th>
+        <td>{{ quote.destinations.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Cities</th>
+        <td>{{ quote.cities.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Inclusions Updated</th>
+        <td>{{ quote.inclusions_updated }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Itinerary Updated</th>
+        <td>{{ quote.itinerary_updated }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Quote Validity</th>
+        <td>{{ quote.quote_valid }}</td>
+      </tr>
+  </table>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col border p-3"><small>Auto-Calculated Price:</small> {{auto_price}} Rs</div>
+        <div class="col border p-3"><small>Mark Up:</small> {{quote.mark_up}} Rs</div>
+        <div class="col border p-3"><small>Discount:</small> {{quote.discount}} Rs</div>
+        <div class="col border p-3"><small>Final Price:</small> {{quote.price}} Rs</div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+{% if not quote.booked %}
+    <div class="row">
+      <div class="col">
+        <a href="{% url 'SalesApp:quote_update' pk=quote.pk %}"> <button class="btn btn-primary px-5" type="submit" name="button">Edit Quote</button> </a>
+      </div>
+      <div class="col">
+        {% if quote.quote_valid %}
+          <form method="GET" action="{% url 'OperationsApp:booking_create' %}">
+            <input type="hidden" name="quote_id" value="{{quote.id}}">
+              <button class="btn btn-primary px-5" type="submit">Create Booking</button>
+          </form>
+        {% endif %}
+      </div>
+      <div class="col">
+        {% if quote.quote_inclusions is False %}
+            <div class="dropdown">
+              <button class="btn btn-primary px-3 dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create Inclusions</button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <form method="GET" action="{% url 'SalesApp:quote_package_selection' pk=quote.id %}">
+                        <button class="dropdown-item" type="submit">Select From Ready Packages</button>
+                    </form>
+                    <form method="GET" action="{% url 'SalesApp:quote_inclusions' pk=quote.pk %}">
+                        <button class="dropdown-item" type="submit">Customized Format</button>
+                    </form>
+                    {% comment %}
+                    <form method="GET" action="{% url 'SalesApp:flex_inclusions_create' %}">
+                      <input type="hidden" name="quote_id" value="{{quote.id}}">
+                        <button class="dropdown-item" type="submit">Fully Flexible</button>
+                    </form>
+                    {% endcomment %}
+              </div>
+            </div>
+        {% elif quote.inclusions_format == 'FIXED' %}
+              <a href="#"> <button class="btn btn-primary mx-3 px-5" type="submit" name="button">Edit Inclusions</button> </a>
+        {% elif quote.inclusions_format == 'CUSTOM' %}
+              <a href="{% url 'SalesApp:quote_inclusions' pk=quote.pk %}"><button class="btn btn-primary px-3" type="submit">Edit Inclusions</button></a>
+        {% elif quote.inclusions_format == 'FLEXIBLE' %}
+              <form method="GET" action="{% url 'SalesApp:flex_inclusions_update' %}">
+                <input type="hidden" name="quote_id" value="{{quote.id}}">
+                  <button class="btn btn-primary" type="submit">Edit Inclusions</button>
+              </form>
+        {% endif %}
+      </div>
+      <div class="col">
+        {% if quote.quote_inclusions is True %}
+              {% if quote.inclusions_format == 'FLEXIBLE'%}
+                    <form method="GET" action="{% url 'SalesApp:flex_itinerary_update' %}">
+                      <input type="hidden" name="quote_id" value="{{quote.id}}">
+                        <button class="btn btn-primary" type="submit">Create / Edit Itinerary</button>
+                    </form>
+              {% elif quote.inclusions_format == 'CUSTOM' %}
+                    <a href="{% url 'SalesApp:quote_itinerary' pk=quote.pk %}"><button class="btn btn-primary" type="submit">Create / Edit Itinerary</button></a>
+              {% endif %}
+        {% endif %}
+      </div>
+    </div>
+{% endif %}
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+      <h4 align="center">Inclusions</h4><br>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Flights</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list  %}
+            {% if object.item_type == 'FLIGHT' %}
+                <div class="row">
+                  <div class="col"><p>{{ object.details|linebreaks }}</p> </div>
+                  <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+                </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Hotels</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object.item_type == 'HOTEL' %}
+            <div class="row">
+              <div class="col"><p>{{ object.checkin_date|date:"d M" }} - {{ object.checkout_date|date:"d M" }} | {{ object.hotel }} | {{ object.room_type }} ({{ object.no_of_rooms }})</p></div>
+              <div class="col-2 float-right">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}   </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Transport</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object|get_model_name == 'Transport' %}
+              <div class="row">
+                <div class="col"><p>{{ object }}</p></div>
+                <div class="col-2 float-right">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}   </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Transfers</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object|get_model_name == 'Transfer' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Sightseeing</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object|get_model_name == 'Sightseeing' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Visa</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object|get_model_name == 'Visa' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Insurance</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object|get_model_name == 'Insurance' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Others</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object.item_type == 'OTHER' %}
+            <div class="row">
+              <div class="col"><p>{{ object.name }} {% if object.other_type == 'TRANSFER' or object.other_type == 'SIGHTSEEING' %}| {{ object.city }}{% endif %} </p></div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{% if price %}{{price}} Rs{% endif %} {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Exclusions</th>
+        <td>
+          {% for object,price,error in inclusions_pricing_list %}
+            {% if object.item_type == 'EXCLUSION' %} <p>{{ object.details|linebreaks }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+  </table>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+
+    <h4 align="center">Itinerary</h4><br>
+      <table class="table table-bordered table-hover table-secondary">
+          {% for day in itinerary_objects_list %}
+            <tr>
+              <th class="bg-secondary th-customer-detail w-25 p-3">Day {{ forloop.counter }}</th>
+              <td>
+              {% for object in day %}
+                {% if object.item_type == 'OTHER' %}
+                  {{ object.details|linebreaks }}
+                {% else %}
+                  <p>{{ object.description|linebreaks }}</p>
+                {% endif %}
+              {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+      </table>
+
+
+  </div>
+</div>
+
+
+
+
+<!-- Modal for Pricing Form -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+  $(document).ready(function() {
+
+      $(".quote-package-selection-btn").modalForm({
+          formURL: "{% url 'SalesApp:quote_package_selection' pk=quote.id %}"
+      });
+
+  });
+  </script>
+
+
+{% endblock %}

@@ -80,7 +80,7 @@ def customer_payment_reminder(request,pk):
 
 
 
-# THIS VIEW HANDELS THE BULK-UPLOAD OF FROM FILES DOWNLOADED FROM BANK PORTAL.
+# THIS VIEW HANDELS THE BULK-UPLOAD OF FILES DOWNLOADED FROM BANK PORTAL.
 @user_passes_test(accounts_group_check,login_url='error403')
 def transaction_upload(request):
     template_name = 'AccountsApp/transaction_upload_form.html'
@@ -114,7 +114,8 @@ def transaction_upload(request):
                                     description += trip_id + " "+ name + " (" + amount + " Rs),  "
                                 transaction.update({'description':description})
 
-                        # ------- FORM PROCESSING ------------------
+                        # ------- FORM PROCESSING ------------------                       
+
                         formset = TransactionUploadFormSet(initial=transactions)
                         form_error = ''
 
@@ -141,7 +142,7 @@ def transaction_upload(request):
                 remarks = form.cleaned_data.get('remarks')
                 reconcile_details = form.cleaned_data.get('reconcile_details')
                 # reconcile_status_bool = form.cleaned_data.get('reconcile_bool')
-                reconcile_status_bool = False if transaction_head.trip_bool == True else True
+                reconcile_bool = False if transaction_head.trip_bool == True else True
                 Transaction.objects.create(date=date, account=account, transaction_ref=transaction_ref, amount=amount, reference_number=reference_number, description=description, inout_type=inout_type, balance=balance, transaction_head=transaction_head, remarks=remarks, reconcile_details=reconcile_details, reconcile_status_bool=reconcile_status_bool)
             return HttpResponseRedirect(reverse('AccountsApp:transaction_list'))
     return render(request,template_name,{'error':error})

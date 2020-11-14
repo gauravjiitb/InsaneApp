@@ -1,5 +1,5 @@
 from django.contrib import admin
-from SalesApp.models import Lead,Quote,Package,Inclusion, FlexInclusions,FlexItinerary, HotelGroup
+from SalesApp.models import Lead,Quote,Package,Inclusion, HotelGroup
 
 # Create your custom admin views here.
 
@@ -16,5 +16,5 @@ admin.site.register(Quote,QuoteAdmin)
 admin.site.register(Package)
 admin.site.register(Inclusion)
 admin.site.register(HotelGroup)
-admin.site.register(FlexInclusions)
-admin.site.register(FlexItinerary)
+# admin.site.register(FlexInclusions)
+# admin.site.register(FlexItinerary)

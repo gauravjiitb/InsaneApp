@@ -1,0 +1,112 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="">
+  <div class="jumbotron">
+    <form method="POST" novalidate>
+      {% csrf_token %}
+      <h4 align="center">Inclusions</h4>
+      <hr>
+      {{ formset.management_form|crispy }}
+      {% for form in formset %}
+          <div class="row">
+              <div class="col-2 item_type-class">{{ form.item_type|as_crispy_field }}</div>
+              <div class="col col-1 other_type-class">{{ form.other_type|as_crispy_field }}</div>
+              <div class="col day-class">{{ form.day|as_crispy_field }}</div>
+              <div class="col nights-class">{{ form.nights|as_crispy_field }}</div>
+              <div class="col city-class">{{ form.city|as_crispy_field }}</div>
+              <div class="col hotel-class">{{ form.hotel|as_crispy_field }}</div>
+              <div class="col name-class">{{ form.name|as_crispy_field }}</div>
+              <div class="col airline-class">{{ form.airline|as_crispy_field }}</div>
+              <div class="col col-5 details-class">{{ form.details|as_crispy_field }}</div>
+              <div class="col col-4 transport-class">{{ form.transport|as_crispy_field }}</div>
+              <div class="col col-4 transfer-class">{{ form.transfer|as_crispy_field }}</div>
+              <div class="col col-4 sightseeing-class">{{ form.sightseeing|as_crispy_field }}</div>
+              <div class="col col-4 visa-class">{{ form.visa|as_crispy_field }}</div>
+              <div class="col col-4 insurance-class">{{ form.insurance|as_crispy_field }}</div>
+              <div class="col room_type-class">{{ form.room_type|as_crispy_field }}</div>
+              <div class="col-1 price-class">{{ form.price|as_crispy_field }}</div>
+              <div class="col-1 itinerary_inclusion-class">{{ form.itinerary_inclusion|as_crispy_field }}</div>
+              {{ form.id }}
+              <div class="col optional-class">{{ form.optional|as_crispy_field }}</div>
+              <div class="col col-1 include-class">{{ form.include|as_crispy_field }}</div>
+              <div class="col-1 DELETE-class">{{ form.DELETE|as_crispy_field }}</div>
+          </div>
+          <hr>
+      {% endfor %}
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5" type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+// FORM STYLING SCRIPTS
+$("textarea").attr('rows',2)
+$("label").css('font-size','0.9em')
+
+
+
+function itemSelections (item) {
+  if (item.val() == '0_FLIGHT') {
+    item.parents('.row').find('.airline-class').show()
+    item.parents('.row').find('.details-class').show()
+  } else if (item.val() == '1_HOTEL') {
+    item.parents('.row').find('.hotel-class').show();
+    item.parents('.row').find('.day-class').show();
+    item.parents('.row').find('.nights-class').show();
+    item.parents('.row').find('.room_type-class').show();
+  } else if (item.val() == '2_TRANSPORT') {
+    item.parents('.row').find('.day-class').show();
+    item.parents('.row').find('.transport-class').show();
+  } else if (item.val() == '3_TRANSFER') {
+    item.parents('.row').find('.day-class').show();
+    item.parents('.row').find('.transfer-class').show()
+  } else if (item.val() == '4_SIGHTSEEING') {
+    item.parents('.row').find('.day-class').show();
+    item.parents('.row').find('.sightseeing-class').show()
+  } else if (item.val() == '5_VISA') {
+    item.parents('.row').find('.visa-class').show()
+  } else if (item.val() == '6_INSURANCE') {
+    item.parents('.row').find('.insurance-class').show()
+  } else if (item.val() == '7_OTHER') {
+    item.parents('.row').find('.day-class').show();
+    item.parents('.row').find('.city-class').show()
+    item.parents('.row').find('.other_type-class').show()
+    item.parents('.row').find('.name-class').show().addClass('col-2')
+    item.parents('.row').find('.details-class').show().removeClass('col-5').addClass('col-3')
+  } else if (item.val() == '8_EXCLUSION') {
+    item.parents('.row').find('.details-class').show().addClass('col-4')
+    item.parents('.row').find('.price-class').hide()
+  }
+}
+
+
+// THIS SCRIPT INITIALIZES THE FORMS WITH EXISTING DATA
+$('.item_type-class select').each(function(){
+  $(this).parents('.row').find('.col').hide();
+  itemSelections($(this));
+});
+$('.optional-class :checked').each(function(){
+  if ($(this).prop('checked') == true) {
+    $(this).parents('.row').find('.include-class').show();
+  }
+});
+
+// THIS SCRIPT MODIFIES THE FORM WHEN USER SELECTS ITEM TYPE IN FORM
+$('.item_type-class select').change(function(){
+  // $(this).parents('.row').find('input').not('[type=hidden]').val("")
+  // $(this).parents('.row').find(':checkbox').prop('checked',false);
+  // $(this).parents('.row').find('select').not('[id*=item_type]').val("")
+  // $(this).parents('.row').find('textarea').val("")
+  $(this).parents('.row').find('.col').hide();
+  itemSelections($(this));
+});
+
+</script>
+
+{% endblock %}

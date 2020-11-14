@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from SalesApp.models import Customer,Lead
-from OperationsApp.models import Booking, BookingItem, Traveler
+from OperationsApp.models import Booking, BookingItem
 
 # Create your custom admin views here.
 
@@ -12,4 +12,3 @@ class BookingAdmin(admin.ModelAdmin):
 
 admin.site.register(Booking,BookingAdmin)
 admin.site.register(BookingItem)
-admin.site.register(Traveler)

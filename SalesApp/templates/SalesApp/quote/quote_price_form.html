@@ -1,0 +1,65 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+
+    <div class="row justify-content-center">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="col border p-3">Auto-Calculated Price: <span class="auto-price">{{auto_price}}</span> Rs</div>
+        {{ form|crispy }}
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5" type="submit">Save</button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+$('input[name*=manual_price]').after("<small class='form-text text-muted'>If you wish enter the base price manually, auto-calculated price won't be considered.</small>");
+$('input[id=id_price]').attr('readonly',true)
+
+
+// SCRIPT FOR PRICE CALCULATION
+var auto_price = parseInt($('.auto-price').text());
+var manual_price = parseInt($('input[id*=manual_price]').val());
+var base_price = 0;
+var price = 0;
+if (manual_price == 0) {
+  base_price = auto_price;
+} else {
+  base_price = manual_price;
+}
+var initial_price = base_price + parseInt($('input[id*=mark_up]').val()) - parseInt($('input[id*=discount]').val());
+$('input[id=id_price]').val(initial_price);
+
+$('input[id*=manual_price]').change(function(){
+  manual_price = parseInt($('input[id*=manual_price]').val());
+  if (manual_price == 0) {
+    base_price = auto_price;
+  } else {
+    base_price = manual_price;
+  }
+  price = base_price + parseInt($('input[id*=mark_up]').val()) - parseInt($('input[id*=discount]').val());
+  $('input[id=id_price]').val(price)
+});
+
+$('input[id*=mark_up]').change(function(){
+  price = base_price  + parseInt($(this).val()) - parseInt($('input[id*=discount]').val());
+  $('input[id=id_price]').val(price);
+});
+$('input[id*=discount]').change(function(){
+  price = base_price + parseInt($('input[id*=mark_up]').val()) - parseInt($(this).val());
+  $('input[id=id_price]').val(price)
+});
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends "base_staff.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% load crispy_forms_tags %}
+{% load my_extras %}
+
+
+
+{% block content %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h4 align="center">Overview</h4>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Lead</th>
+        <td>{{ quote.lead }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Title</th>
+        <td>{{ quote.title }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Themes</th>
+        <td>{{ quote.themes.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Tags</th>
+        <td>{{ quote.tags.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Starting Place</th>
+        <td>{{ quote.starting_place }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Pax</th>
+        <td>{{ quote.adults }} Adults{% if quote.children %}, {{ quote.children }} Children ({{ quote.children_age }}) {% endif %} </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Dates</th>
+        <td>{{ quote.start_date }} - {{ quote.end_date }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Destinations</th>
+        <td>{{ quote.destinations.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Cities</th>
+        <td>{{ quote.cities.all|join:", " }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Inclusions Updated</th>
+        <td>{{ quote.inclusions_updated }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Itinerary Updated</th>
+        <td>{{ quote.itinerary_updated }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Price Validity</th>
+        <td>{{ quote.price_valid }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Quote Validity</th>
+        <td>{{ quote.quote_valid }}</td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail">Total Price</th>
+        <td>{{ quote.price }}</td>
+      </tr>
+  </table>
+
+
+{% if quote.lead.lead_status != 'BOOKED' %}
+    <div class="row">
+      <div class="col">
+        <a href="{% url 'SalesApp:quote_update' pk=quote.pk %}"> <button class="btn btn-primary px-3" type="submit" name="button">Edit Quote</button> </a>
+      </div>
+      <div class="col">
+        {% if quote.quote_valid %}
+          <form method="GET" action="{% url 'OperationsApp:booking_create' %}">
+            <input type="hidden" name="quote_id" value="{{quote.id}}">
+              <button class="btn btn-primary px-3" type="submit">Create Booking</button>
+          </form>
+        {% endif %}
+      </div>
+      <div class="col">
+        {% if quote.inclusions_exist is False %}
+            <div class="dropdown">
+              <button class="btn btn-primary px-3 dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create Inclusions</button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <form method="GET" action="{% url 'SalesApp:quote_package_selection' pk=quote.id %}">
+                        <button class="dropdown-item" type="submit">Select From Ready Packages</button>
+                    </form>
+                    <form method="GET" action="{% url 'SalesApp:quote_inclusions_bulk_select' pk=quote.pk %}">
+                        <button class="dropdown-item" type="submit">Customized Format</button>
+                    </form>
+              </div>
+            </div>
+        {% endif %}
+              <a href="{% url 'SalesApp:quote_inclusions' pk=quote.pk %}"><button class="btn btn-primary px-3" type="submit">Edit Inclusions</button></a>
+      </div>
+      <div class="col">
+        <a href="{% url 'SalesApp:quote_itinerary' pk=quote.pk %}"><button class="btn btn-primary" type="submit">Create / Edit Itinerary</button></a>
+      </div>
+      <div class="col">
+        <a href="{% url 'SalesApp:quote_pricing' pk=quote.id %}"><button class="btn btn-primary px-3" type="submit">Pricing</button></a>
+      </div>
+
+    </div>
+{% endif %}
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+      <h4 align="center">Inclusions</h4><br>
+    <table class="table table-bordered table-hover table-secondary">
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Flights</th>
+        <td>
+          {% for object,price,error in inclusions_list  %}
+            {% if object.item_type == '0_FLIGHT' %}
+                <div class="row">
+                  <div class="col"><p>{{ object.details|linebreaks }}</p> </div>
+                  <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+                </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Hotels</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '1_HOTEL' %}
+            <div class="row">
+              <div class="col"><p>{{ object.nights }} Nights | {{ object.hotel }} | {{ object.room_type }}</p></div>
+              <div class="col-2 float-right">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}   </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Transport</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '2_TRANSPORT' %}
+              <div class="row">
+                <div class="col"><p>{{ object }}</p></div>
+                <div class="col-2 float-right">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}   </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Transfers</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '3_TRANSFER' %}
+            <div class="row">
+              <div class="col"><p>{{ object.title }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Sightseeing</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '4_SIGHTSEEING' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Visa</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '5_VISA' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Insurance</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '6_INSURANCE' %}
+            <div class="row">
+              <div class="col"><p>{{ object }}</p> </div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{{price}} Rs {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Others</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '7_OTHER' %}
+            <div class="row">
+              <div class="col"><p>{{ object }} {% if object.other_type == 'TRANSFER' or object.other_type == 'SIGHTSEEING' %}| {{ object.city }}{% endif %} </p></div>
+              <div class="col-2 float-right align-self-center">{% if not error %}{% if price %}{{price}} Rs{% endif %} {% else %}<span class="badge badge-pill badge-danger">Pricing Error</span>{% endif %}</div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+      <tr>
+        <th class="bg-secondary th-customer-detail w-25 p-3">Exclusions</th>
+        <td>
+          {% for object,price,error in inclusions_list %}
+            {% if object.item_type == '8_EXCLUSION' %} <p>{{ object.details|linebreaks }}</p> {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+  </table>
+  </div>
+</div>
+
+
+
+
+<div class="container">
+  <div class="jumbotron">
+
+    <h4 align="center">Itinerary</h4><br>
+      <table class="table table-bordered table-hover table-secondary">
+          {% for day in itinerary %}
+            <tr>
+              <th class="bg-secondary th-customer-detail w-25 p-3">Day {{ forloop.counter }}</th>
+              <td>
+              {% for item in day %}
+
+                  <p>{{ item|linebreaks }}</p>
+              {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+      </table>
+
+
+  </div>
+</div>
+
+
+{% endblock %}

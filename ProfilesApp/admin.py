@@ -1,7 +1,7 @@
 from django.contrib import admin
 # from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from ProfilesApp.models import User,Customer,Staff
+from ProfilesApp.models import User,Customer,Staff,Traveler
 # from ProfilesApp.forms import AddUserForm,UpdateUserForm
 
 
@@ -23,7 +23,7 @@ class StaffAdmin(admin.ModelAdmin):
 admin.site.register(User,UserAdmin)
 admin.site.register(Customer,CustomerAdmin)
 admin.site.register(Staff,StaffAdmin)
-
+admin.site.register(Traveler)
 
 
 #####################################################################

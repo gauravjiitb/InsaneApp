@@ -27,7 +27,7 @@ urlpatterns = [
     path('admin/password_reset/done/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done',),
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm',),
     path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete',),
-    path('',auth_views.LoginView.as_view(template_name='registration/login_staff.html'),name='login'),
+    path('login/',auth_views.LoginView.as_view(template_name='registration/login_staff.html'),name='login'),
     path('logout/',auth_views.LogoutView.as_view(),name='logout'),
 
     path('tinymce/', include('tinymce.urls')),
@@ -39,7 +39,7 @@ urlpatterns = [
     path('accounts/',include('AccountsApp.urls',namespace='AccountsApp')),
     path('content/',include('ContentApp.urls',namespace='ContentApp')),
 
-    path('dashboard/',main_views.DashboardView.as_view(),name='dashboard'),
+    path('',main_views.DashboardView.as_view(),name='dashboard'),
     path('403/',TemplateView.as_view(template_name='error_page_403.html'),name='error403'),
     ]
 

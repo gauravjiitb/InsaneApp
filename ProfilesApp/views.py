@@ -1,15 +1,15 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
-from django.views.generic import FormView,ListView,DetailView
+from django.views.generic import FormView,ListView,DetailView, CreateView
 from django.urls import reverse_lazy,reverse
 from django.contrib.auth import get_user_model
 
 from django_filters.views import FilterView
 
-from ProfilesApp.models import Customer
+from ProfilesApp.models import Customer, Traveler, Staff
 from SalesApp.models import Lead
 from OperationsApp.models import Booking
-from ProfilesApp.forms import CustomerCreateForm,CustomerUpdateForm
+from ProfilesApp.forms import CustomerCreateForm,CustomerUpdateForm, TravelerForm
 from ProfilesApp.filters import CustomerFilter
 
 
@@ -19,8 +19,6 @@ from ProfilesApp.filters import CustomerFilter
 ###############################
 #   CUSTOMER VIEWS
 ###############################
-
-
 class CustomerListView(LoginRequiredMixin,FilterView):
     template_name = 'ProfilesApp/customer_list.html'
     paginate_by = 10
@@ -47,7 +45,7 @@ class CustomerCreateView(LoginRequiredMixin,FormView):
 
     def form_valid(self,form):
         form.save()
-        return redirect('ProfilesApp:customer_list',permanent=True)
+        return redirect('ProfilesApp:customer_list')
 
 
 class CustomerUpdateView(LoginRequiredMixin,FormView):
@@ -67,3 +65,16 @@ class CustomerUpdateView(LoginRequiredMixin,FormView):
         initial['name'] = customer.user.name
         initial['phone'] = customer.user.phone
         return initial
+
+
+###############################
+#   TRAVELER VIEWS
+###############################
+
+class TravelerCreateView(LoginRequiredMixin,CreateView):
+    model = Traveler
+    form_class = TravelerForm
+
+class TravelerUpdateView(LoginRequiredMixin,CreateView):
+    model = Traveler
+    form_class = TravelerForm

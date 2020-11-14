@@ -1,0 +1,26 @@
+{% extends "base_staff.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container w-75 p-3">
+  <br>
+  <div class="jumbotron">
+    <h5 align='center'>All details must be exactly as per passport.</h5>
+    <br>
+    <div class="row justify-content-center">
+      <div class="col-6">
+        <div class="card">
+          <div class="card-body">
+            <form method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button class="btn btn-primary btn-lg float-right px-5" type="submit">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

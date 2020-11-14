@@ -6,123 +6,29 @@
 
 {% block content %}
 
-<div class="container">
-<div class="jumbotron">
-
-  <h6>Itinerary Details</h6>
-  <hr>
-  <small>To organize the itinerary, drag the items from right container to respective days in left container.</small>
-  <hr>
-
-  <div class="row">
-    <div class="col">
-      <h6>Day to day Itinerary</h6>
-      {% for object_list in itinerary_objects_list %}
-      <div class="card itinerary-card">
-        <p>Day {{forloop.counter}}</p>
-        <div class="sortable included-elements card-body">
-          {% for object in object_list %}
-            {% if object|get_model_name == 'Transfer' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transfer-{{object.id}}">{{ object }}</p>
-            {% endif %}
-            {% if object|get_model_name == 'Sightseeing' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="sightseeing-{{object.id}}">{{ object }}</p>
-            {% endif %}
-            {% if object|get_model_name == 'Transport' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transport-{{object.id}}">{{ object }}</p>
-            {% endif %}
-            {% if object|get_model_name == 'Inclusion' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="other-{{object.id}}">{{ object.name }}</p>
-            {% endif %}
-          {% endfor %}
-        </div>
-      </div>
+<div class="">
+  <div class="jumbotron">
+    <form method="POST" novalidate>
+      {% csrf_token %}
+      <h4 align="center">Itinerary</h4>
+      <hr>
+      {{ formset.management_form|crispy }}
+      {% for form in formset %}
+          <div class="row">
+              <div class="col">{{ form.title|as_crispy_field }}</div>
+              <div class="col-2">{{ form.day|as_crispy_field }}</div>
+              <div class="col-2">{{ form.itinerary_order|as_crispy_field }}</div>
+              {{ form.id }}
+          </div>
       {% endfor %}
-    </div>
-
-    <div class="col">
-      <h6>All Transfers and Sightseeing</h6>
-      <div class="card">
-        <div class=" sortable card-body">
-          {% for object in itinerary_choices_objects_list %}
-            {% if object|get_model_name == 'Transfer' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transfer-{{object.id}}">{{ object }}</p>
-            {% endif %}
-            {% if object|get_model_name == 'Sightseeing' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="sightseeing-{{object.id}}">{{ object }}</p>
-            {% endif %}
-            {% if object|get_model_name == 'Transport' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="transport-{{object.id}}">{{ object }}</p>
-            {% endif %}
-            {% if object|get_model_name == 'Inclusion' %}
-              <p class="draggable d-block p-2 m-1 bg-secondary text-white" id="other-{{object.id}}">{{ object.name }}</p>
-            {% endif %}
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
+        <button class="btn btn-primary btn-lg float-right mx-5 px-5" type="submit">Save</button>
+    </form>
   </div>
-
-
-  <form method="POST" novalidate>
-  {% csrf_token %}
-  {{ itinerary_formset.management_form|crispy }}
-  <div class="row">
-    {% for form in itinerary_formset %}
-      <div class="itinerary-selections row justify-content-center d-none">
-        {% for field in form %}
-          <div class="col"> {{ field|as_crispy_field }}</div>
-        {% endfor %}
-      </div>
-    {% endfor %}
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <br>
-      <button class="btn btn-primary btn-lg float-right mx-5 px-5" name="redirect" value="True" type="submit">Save</button>
-    </div>
-  </div>
-  </form>
-
-</div>
 </div>
 
 
 <script>
-// FORM STYLING SCRIPTS
+  $("textarea").attr('rows',1)
 </script>
-
-<script>
-
-
-
-
-// THIS SCRIPT COPIES THE ORDER OF ELEMENTS IN ITINERARY AND COPIES IT TO ITINERARY FORMSET.
-$( function() {
-  $( ".sortable" ).sortable({
-    revert: true
-  });
-  $( ".draggable" ).draggable({
-    connectToSortable: ".sortable",
-    revert: "invalid"
-  });
-
-  $(".sortable.included-elements").each(function(index){
-    var x = $(this).sortable("toArray");
-    $("input[name*="+index+"-itinerary]").val(x);
-  });
-
-  $(".sortable").on("sortreceive", function(event,ui){
-    $(".sortable.included-elements").each(function(index){
-      var x = $(this).sortable("toArray");
-      $("input[name*="+index+"-itinerary]").val(x);
-    });
-  });
-  $( ".draggable" ).disableSelection();
-});
-</script>
-
 
 {% endblock %}
